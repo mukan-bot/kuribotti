@@ -253,6 +253,8 @@ void PlaySound(int label)
 	// オーディオバッファの登録
 	g_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
 
+	g_apSourceVoice[label]->SetVolume(0.01f);
+
 	// 再生
 	g_apSourceVoice[label]->Start(0);
 
