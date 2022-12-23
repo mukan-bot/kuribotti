@@ -34,6 +34,7 @@ void UpdateBG(void);
 void DrawBG(void);
 
 BG* GetBG(void);
+void SetBG(int x, int y, int id);
 
 
 

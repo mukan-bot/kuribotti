@@ -37,7 +37,6 @@ static char *g_TexturName[TEXTURE_MAX] = {
 	"data/TEXTURE/title.png",
 	"data/TEXTURE/effect000.jpg",
 	"data/TEXTURE/title_logo1.png",
-
 };
 
 
