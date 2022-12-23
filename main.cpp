@@ -57,6 +57,7 @@ int	g_Mode = MODE_TITLE;					// 起動時の画面を設定
 
 BOOL g_LoadGame = FALSE;					// NewGame
 
+BOOL g_win = false;
 
 //=============================================================================
 // メイン関数
@@ -442,7 +443,7 @@ void SetMode(int mode)
 	case MODE_TITLE:
 		// タイトル画面の初期化
 		InitTitle();
-		PlaySound(SOUND_LABEL_BGM_maou);
+		PlaySound(SOUND_LABEL_title);
 		break;
 
 	case MODE_GAME:
@@ -461,12 +462,17 @@ void SetMode(int mode)
 			g_LoadGame = FALSE;		// ロードしたからフラグをClearする
 		}
 
-		PlaySound(SOUND_LABEL_BGM_sample001);
+		PlaySound(SOUND_LABEL_game);
 		break;
 
 	case MODE_RESULT:
 		InitResult();
-		PlaySound(SOUND_LABEL_BGM_sample002);
+		if (g_win) {
+			PlaySound(SOUND_LABEL_BGM_resultKati);
+		}
+		else {
+			PlaySound(SOUND_LABEL_BGM_resultMake);
+		}
 		break;
 
 	case MODE_MAX:
