@@ -443,7 +443,8 @@ void SetMode(int mode)
 	case MODE_TITLE:
 		// タイトル画面の初期化
 		InitTitle();
-		PlaySound(SOUND_LABEL_title);
+		PlaySound(SOUND_LABEL_BGM_title);
+
 		break;
 
 	case MODE_GAME:
@@ -462,7 +463,7 @@ void SetMode(int mode)
 			g_LoadGame = FALSE;		// ロードしたからフラグをClearする
 		}
 
-		PlaySound(SOUND_LABEL_game);
+		PlaySound(SOUND_LABEL_BGM_game);
 		break;
 
 	case MODE_RESULT:
