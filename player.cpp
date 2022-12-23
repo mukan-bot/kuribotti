@@ -308,29 +308,29 @@ void UpdatePlayer(void)
 					g_Player[i].pos.x = 0.0f;
 				}
 
-				if (g_Player[i].pos.x > bg->w)
-				{
-					g_Player[i].pos.x = bg->w;
-				}
+				//if (g_Player[i].pos.x > bg->w)
+				//{
+				//	g_Player[i].pos.x = bg->w;
+				//}
 
 				if (g_Player[i].pos.y < 0.0f)
 				{
 					g_Player[i].pos.y = 0.0f;
 				}
 
-				if (g_Player[i].pos.y > bg->h)
-				{
-					g_Player[i].pos.y = bg->h;
-				}
+				//if (g_Player[i].pos.y > bg->h)
+				//{
+				//	g_Player[i].pos.y = bg->h;
+				//}
 
 				// プレイヤーの立ち位置からMAPのスクロール座標を計算する
-				bg->pos.x = g_Player[i].pos.x - PLAYER_DISP_X;
-				if (bg->pos.x < 0) bg->pos.x = 0;
-				if (bg->pos.x > bg->w - SCREEN_WIDTH) bg->pos.x = bg->w - SCREEN_WIDTH;
+				//bg->pos.x = g_Player[i].pos.x - PLAYER_DISP_X;
+				//if (bg->pos.x < 0) bg->pos.x = 0;
+				//if (bg->pos.x > bg->w - SCREEN_WIDTH) bg->pos.x = bg->w - SCREEN_WIDTH;
 
-				bg->pos.y = g_Player[i].pos.y - PLAYER_DISP_Y;
-				if (bg->pos.y < 0) bg->pos.y = 0;
-				if (bg->pos.y > bg->h - SCREEN_HEIGHT) bg->pos.y = bg->h - SCREEN_HEIGHT;
+				//bg->pos.y = g_Player[i].pos.y - PLAYER_DISP_Y;
+				//if (bg->pos.y < 0) bg->pos.y = 0;
+				//if (bg->pos.y > bg->h - SCREEN_HEIGHT) bg->pos.y = bg->h - SCREEN_HEIGHT;
 
 
 				// 移動が終わったらエネミーとの当たり判定
@@ -424,11 +424,11 @@ void DrawPlayer(void)
 				// テクスチャ設定
 				GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[1]);
 
-				float px = g_Player[i].pos.x - bg->pos.x;	// プレイヤーの表示位置X
-				float py = g_Player[i].pos.y - bg->pos.y;	// プレイヤーの表示位置Y
+				//float px = g_Player[i].pos.x - bg->pos.x;	// プレイヤーの表示位置X
+				//float py = g_Player[i].pos.y - bg->pos.y;	// プレイヤーの表示位置Y
 				float pw = g_Player[i].w;		// プレイヤーの表示幅
 				float ph = g_Player[i].h/4;		// プレイヤーの表示高さ
-				py += 50.0f;		// 足元に表示
+				//py += 50.0f;		// 足元に表示
 
 				float tw = 1.0f;	// テクスチャの幅
 				float th = 1.0f;	// テクスチャの高さ
@@ -436,8 +436,8 @@ void DrawPlayer(void)
 				float ty = 0.0f;	// テクスチャの左上Y座標
 
 				// １枚のポリゴンの頂点とテクスチャ座標を設定
-				SetSpriteColor(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
-					XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+				//SetSpriteColor(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
+				//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 
 				// ポリゴン描画
 				GetDeviceContext()->Draw(4, 0);
@@ -456,12 +456,12 @@ void DrawPlayer(void)
 			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_Player[i].texNo]);
 
 			//プレイヤーの位置やテクスチャー座標を反映
-			float px = g_Player[i].pos.x - bg->pos.x;	// プレイヤーの表示位置X
-			float py = g_Player[i].pos.y - bg->pos.y;	// プレイヤーの表示位置Y
+			//float px = g_Player[i].pos.x - bg->pos.x;	// プレイヤーの表示位置X
+			//float py = g_Player[i].pos.y - bg->pos.y;	// プレイヤーの表示位置Y
 			float pw = g_Player[i].w;		// プレイヤーの表示幅
 			float ph = g_Player[i].h;		// プレイヤーの表示高さ
 
-			py += g_Player[i].jumpY;		// ジャンプ中の高さを足す
+			//py += g_Player[i].jumpY;		// ジャンプ中の高さを足す
 
 			// アニメーション用
 			float tw = 1.0f / TEXTURE_PATTERN_DIVIDE_X;	// テクスチャの幅
@@ -475,9 +475,9 @@ void DrawPlayer(void)
 			//float ty = 0.0f;	// テクスチャの左上Y座標
 
 			// １枚のポリゴンの頂点とテクスチャ座標を設定
-			SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
-				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-				g_Player[i].rot.z);
+			//SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
+			//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			//	g_Player[i].rot.z);
 
 			// ポリゴン描画
 			GetDeviceContext()->Draw(4, 0);
@@ -512,8 +512,8 @@ void DrawPlayerOffset(int no)
 	for (int j = PLAYER_OFFSET_CNT - 1; j >= 0; j--)
 	{
 		//プレイヤーの位置やテクスチャー座標を反映
-		float px = g_Player[no].offset[j].x - bg->pos.x;	// プレイヤーの表示位置X
-		float py = g_Player[no].offset[j].y - bg->pos.y;	// プレイヤーの表示位置Y
+		//float px = g_Player[no].offset[j].x - bg->pos.x;	// プレイヤーの表示位置X
+		//float py = g_Player[no].offset[j].y - bg->pos.y;	// プレイヤーの表示位置Y
 		float pw = g_Player[no].w;		// プレイヤーの表示幅
 		float ph = g_Player[no].h;		// プレイヤーの表示高さ
 
@@ -525,9 +525,9 @@ void DrawPlayerOffset(int no)
 
 
 		// １枚のポリゴンの頂点とテクスチャ座標を設定
-		SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
-			XMFLOAT4(1.0f, 1.0f, 1.0f, alpha),
-			g_Player[no].rot.z);
+		//SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
+		//	XMFLOAT4(1.0f, 1.0f, 1.0f, alpha),
+			//g_Player[no].rot.z);
 
 		alpha += (1.0f / PLAYER_OFFSET_CNT);
 

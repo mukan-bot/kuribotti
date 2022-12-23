@@ -148,10 +148,10 @@ void UpdateBullet(void)
 			{
 				g_Bullet[i].use = false;
 			}
-			if (g_Bullet[i].pos.y > (bg->h + g_Bullet[i].h/2))	// 自分の大きさを考慮して画面外か判定している
-			{
-				g_Bullet[i].use = false;
-			}
+			//if (g_Bullet[i].pos.y > (bg->h + g_Bullet[i].h/2))	// 自分の大きさを考慮して画面外か判定している
+			//{
+			//	g_Bullet[i].use = false;
+			//}
 
 			// 当たり判定処理
 			{
@@ -219,8 +219,8 @@ void DrawBullet(void)
 			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_Bullet[i].texNo]);
 
 			//バレットの位置やテクスチャー座標を反映
-			float px = g_Bullet[i].pos.x - bg->pos.x;	// バレットの表示位置X
-			float py = g_Bullet[i].pos.y - bg->pos.y;	// バレットの表示位置Y
+			//float px = g_Bullet[i].pos.x - bg->pos.x;	// バレットの表示位置X
+			//float py = g_Bullet[i].pos.y - bg->pos.y;	// バレットの表示位置Y
 			float pw = g_Bullet[i].w;		// バレットの表示幅
 			float ph = g_Bullet[i].h;		// バレットの表示高さ
 
@@ -230,11 +230,11 @@ void DrawBullet(void)
 			float ty = (float)(g_Bullet[i].patternAnim / TEXTURE_PATTERN_DIVIDE_X) * th;	// テクスチャの左上Y座標
 
 			// １枚のポリゴンの頂点とテクスチャ座標を設定
-			SetSpriteColorRotation(g_VertexBuffer, 
-				px, py, pw, ph, 
-				tx, ty, tw, th,
-				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-				g_Bullet[i].rot.z);
+			//SetSpriteColorRotation(g_VertexBuffer, 
+			//	px, py, pw, ph, 
+			//	tx, ty, tw, th,
+			//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			//	g_Bullet[i].rot.z);
 
 			// ポリゴン描画
 			GetDeviceContext()->Draw(4, 0);

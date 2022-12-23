@@ -20,28 +20,27 @@
 //*****************************************************************************
 // 構造体定義
 //*****************************************************************************
+enum dir {
+	UP,
+	RIGHT,
+	DOWN,
+	LEFT
+};
 
 struct ENEMY
 {
-	XMFLOAT3	pos;			// ポリゴンの座標
-	XMFLOAT3	rot;			// ポリゴンの回転量
-	XMFLOAT3	scl;			// ポリゴンの拡大縮小
 	BOOL		use;			// true:使っている  false:未使用
-	float		w, h;			// 幅と高さ
+	bool		isTrapped;		// true:動けない  false:動ける
+	int			Dir;			//	向いている方向
+	int			x, y;			//	マップ上の座標
+	int			distance;
+	int			targetID;		// 向かっているエネミーの番号
 	float		countAnim;		// アニメーションカウント
 	int			patternAnim;	// アニメーションパターンナンバー
-	int			texNo;			// テクスチャ番号
-	XMFLOAT3	move;			// 移動速度
-
-
-	float		time;			// 線形補間用
-	int			tblNo;			// 行動データのテーブル番号
-	int			tblMax;			// そのテーブルのデータ数
-
-	//INTERPOLATION_DATA* tbl_adr;			// アニメデータのテーブル先頭アドレス
-	//int					tbl_size;			// 登録したテーブルのレコード総数
-	//float				move_time;			// 実行時間
+	int			enemyType;		// エネミー番号
 };
+
+
 
 
 //*****************************************************************************
@@ -51,7 +50,7 @@ HRESULT InitEnemy(void);
 void UninitEnemy(void);
 void UpdateEnemy(void);
 void DrawEnemy(void);
-
+int GetMDistance(int x1, int y1, int x2, int y2);
 ENEMY* GetEnemy(void);
 
 
