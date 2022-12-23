@@ -7,6 +7,7 @@
 #include "title.h"
 #include "input.h"
 #include "fade.h"
+#include "sound.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -136,15 +137,21 @@ void UpdateTitle(void)
 	{
 		g_CheckMode = 0;
 	}
+	//上の制限がなかったので追加
+	if (g_CheckMode == -1) {
+		g_CheckMode = TITLE_MODE_QUIT;
+	}
 
 	if (GetKeyboardTrigger(DIK_DOWN) || IsButtonPressed(0, BUTTON_DOWN))
 	{
 		g_CheckMode++;
+		PlaySound(SOUND_LABEL_SE_select1);
 	}
 
 	if (GetKeyboardTrigger(DIK_UP) || IsButtonPressed(0, BUTTON_UP))
 	{
 		g_CheckMode--;
+		PlaySound(SOUND_LABEL_SE_select1);
 	}
 
 	switch (g_CheckMode)
@@ -153,6 +160,7 @@ void UpdateTitle(void)
 	{
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
+			PlaySound(SOUND_LABEL_SE_select2);
 			SetFade(FADE_OUT, MODE_GAME);
 		}
 		break;
@@ -162,6 +170,7 @@ void UpdateTitle(void)
 	{
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
+			PlaySound(SOUND_LABEL_SE_select2);
 			exit(-1);
 		}
 		break;
@@ -171,10 +180,12 @@ void UpdateTitle(void)
 	// ゲームパッドで入力処理
 	if (IsButtonTriggered(0, BUTTON_START))
 	{
+		PlaySound(SOUND_LABEL_SE_select2);
 		SetFade(FADE_OUT, MODE_GAME);
 	}
 	else if (IsButtonTriggered(0, BUTTON_B))
 	{
+		PlaySound(SOUND_LABEL_SE_select2);
 		SetFade(FADE_OUT, MODE_GAME);
 	}
 
