@@ -252,7 +252,7 @@ void DrawEffect(void)
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	SetMaterial(material);
 
-	BG* bg = GetBG();
+	//BG* bg = GetBG();
 
 	for (int i = 0; i < EFFECT_NUM_EFFECTS; i++)
 	{

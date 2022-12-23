@@ -255,23 +255,6 @@ void UpdatePlayer(void)
 					g_Player[i].moving = TRUE;
 				}
 
-				// 力業ジャンプ処理
-				//if (g_jumpCnt > 0)
-				//{
-				//	g_Player[i].pos.y += g_jump[g_jumpCnt];
-				//	g_jumpCnt++;
-				//	if (g_jumpCnt >= PLAYER_JUMP_CNT_MAX)
-				//	{
-				//		g_jumpCnt = 0;
-				//	}
-				//}
-
-				//if ((g_jumpCnt == 0) && (GetKeyboardTrigger(DIK_J)))
-				//{
-				//	g_Player[i].pos.y += g_jump[g_jumpCnt];
-				//	g_jumpCnt++;
-				//}
-
 
 
 
@@ -301,73 +284,16 @@ void UpdatePlayer(void)
 
 
 				// MAP外チェック
-				BG* bg = GetBG();
+				//BG* bg = GetBG();
 
 				if (g_Player[i].pos.x < 0.0f)
 				{
 					g_Player[i].pos.x = 0.0f;
 				}
 
-				//if (g_Player[i].pos.x > bg->w)
-				//{
-				//	g_Player[i].pos.x = bg->w;
-				//}
-
 				if (g_Player[i].pos.y < 0.0f)
 				{
 					g_Player[i].pos.y = 0.0f;
-				}
-
-				//if (g_Player[i].pos.y > bg->h)
-				//{
-				//	g_Player[i].pos.y = bg->h;
-				//}
-
-				// プレイヤーの立ち位置からMAPのスクロール座標を計算する
-				//bg->pos.x = g_Player[i].pos.x - PLAYER_DISP_X;
-				//if (bg->pos.x < 0) bg->pos.x = 0;
-				//if (bg->pos.x > bg->w - SCREEN_WIDTH) bg->pos.x = bg->w - SCREEN_WIDTH;
-
-				//bg->pos.y = g_Player[i].pos.y - PLAYER_DISP_Y;
-				//if (bg->pos.y < 0) bg->pos.y = 0;
-				//if (bg->pos.y > bg->h - SCREEN_HEIGHT) bg->pos.y = bg->h - SCREEN_HEIGHT;
-
-
-				// 移動が終わったらエネミーとの当たり判定
-				{
-					ENEMY* enemy = GetEnemy();
-
-					// エネミーの数分当たり判定を行う
-					for (int j = 0; j < ENEMY_MAX; j++)
-					{
-						// 生きてるエネミーと当たり判定をする
-						if (enemy[j].use == TRUE)
-						{
-							BOOL ans = CollisionBB(g_Player[i].pos, g_Player[i].w, g_Player[i].h,
-								enemy[j].pos, enemy[j].w, enemy[j].h);
-							// 当たっている？
-							if (ans == TRUE)
-							{
-								// 当たった時の処理
-								enemy[j].use = FALSE;
-								AddScore(10);
-							}
-						}
-					}
-				}
-
-				// バレット処理
-				if (GetKeyboardTrigger(DIK_SPACE))
-				{
-					XMFLOAT3 pos = g_Player[i].pos;
-					pos.y += g_Player[i].jumpY;
-					SetBullet(pos);
-				}
-				if (IsButtonTriggered(0, BUTTON_B))
-				{
-					XMFLOAT3 pos = g_Player[i].pos;
-					pos.y += g_Player[i].jumpY;
-					SetBullet(pos);
 				}
 
 			}
@@ -411,7 +337,7 @@ void DrawPlayer(void)
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	SetMaterial(material);
 
-	BG* bg = GetBG();
+	//BG* bg = GetBG();
 
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
@@ -503,7 +429,7 @@ PLAYER* GetPlayer(void)
 //=============================================================================
 void DrawPlayerOffset(int no)
 {
-	BG* bg = GetBG();
+	//BG* bg = GetBG();
 	float alpha = 0.0f;
 
 	// テクスチャ設定

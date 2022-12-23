@@ -143,7 +143,7 @@ void UpdateBullet(void)
 			XMStoreFloat3(&g_Bullet[i].pos, pos);
 
 			// 画面外まで進んだ？
-			BG* bg = GetBG();
+			//BG* bg = GetBG();
 			if (g_Bullet[i].pos.y < (-g_Bullet[i].h/2))		// 自分の大きさを考慮して画面外か判定している
 			{
 				g_Bullet[i].use = false;
@@ -152,32 +152,6 @@ void UpdateBullet(void)
 			//{
 			//	g_Bullet[i].use = false;
 			//}
-
-			// 当たり判定処理
-			{
-				ENEMY* enemy = GetEnemy();
-
-				// エネミーの数分当たり判定を行う
-				for (int j = 0; j < ENEMY_MAX; j++)
-				{
-					// 生きてるエネミーと当たり判定をする
-					if (enemy[j].use == TRUE)
-					{
-						BOOL ans = CollisionBB(g_Bullet[i].pos, g_Bullet[i].w, g_Bullet[i].h,
-							enemy[j].pos, enemy[j].w, enemy[j].h);
-						// 当たっている？
-						if (ans == TRUE)
-						{
-							// 当たった時の処理
-							enemy[j].use = FALSE;
-							AddScore(100);
-
-							// エフェクト発生
-							SetEffect(enemy[j].pos.x, enemy[j].pos.y, 30);
-						}
-					}
-				}
-			}
 
 
 			bulletCount++;
@@ -209,7 +183,7 @@ void DrawBullet(void)
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	SetMaterial(material);
 
-	BG* bg = GetBG();
+	//BG* bg = GetBG();
 
 	for (int i = 0; i < BULLET_MAX; i++)
 	{
