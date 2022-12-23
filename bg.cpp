@@ -27,7 +27,7 @@ static ID3D11Buffer				*g_VertexBuffer = NULL;		// 頂点情報
 static ID3D11ShaderResourceView	*g_Texture[TEXTURE_MAX] = { NULL };	// テクスチャ情報
 
 static char *g_TexturName[TEXTURE_MAX] = {
-	"data/TEXTURE/map.png",
+	"data/TEXTURE/yuka01.jpg",
 	"data/TEXTURE/sky000.jpg",
 	"data/TEXTURE/sky001.jpg",
 	"data/TEXTURE/gokiburi_hoihoi.png",
@@ -71,6 +71,20 @@ HRESULT InitBG(void)
 	for (int y = 0; y < SCREEN_HEIGHT / TILE_SIZE; y++) {
 		for (int x = 0; x < SCREEN_WIDTH / TILE_SIZE; x++) {
 			g_BG[y][x].spriteId = 0;
+			{
+				//if (y == 0) {
+				//	g_BG[y][x].spriteId = 1;
+				//}
+				//if (x == 0) {
+				//	g_BG[y][x].spriteId = 1;
+				//}
+				//if (y == (SCREEN_HEIGHT / TILE_SIZE) - 1) {
+				//	g_BG[y][x].spriteId = 1;
+				//}
+				//if (x == (SCREEN_WIDTH / TILE_SIZE) - 1) {
+				//	g_BG[y][x].spriteId = 1;
+				//}
+			}
 		}
 	}
 
@@ -146,11 +160,11 @@ void DrawBG(void)
 
 	for (int y = 0; y < SCREEN_HEIGHT / TILE_SIZE; y++) {
 		for (int x = 0; x < SCREEN_WIDTH / TILE_SIZE; x++) {
+			BG* bg = GetBG();
+
 			
-
-
 			// テクスチャ設定
-			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_BG[y][x].spriteId]);
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[0]);
 
 			// １枚のポリゴンの頂点とテクスチャ座標を設定
 			SetSpriteLTColor(g_VertexBuffer,
@@ -160,30 +174,23 @@ void DrawBG(void)
 
 			// ポリゴン描画
 			GetDeviceContext()->Draw(4, 0);
+
+			if (g_BG[y][x].spriteId != 0) {
+
+				GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_BG[y][x].spriteId]);
+
+				// １枚のポリゴンの頂点とテクスチャ座標を設定
+				SetSpriteLTColor(g_VertexBuffer,
+					TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE,
+					0.0f, 0.0f, 1.0f, 1.0f,
+					XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+
+				// ポリゴン描画
+				GetDeviceContext()->Draw(4, 0);
+			}
+
 		}
 	}
-
-	// 空を描画
-	//{
-	//	// テクスチャ設定
-	//	GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[1]);
-
-	//	// １枚のポリゴンの頂点とテクスチャ座標を設定
-	//	//float	tx = (g_BG.pos.x - g_BG.old_pos.x) * ((float)SCREEN_WIDTH / TEXTURE_WIDTH);
-	//	//g_BG.scrl += tx * 0.001f;
-	//	g_BG.scrl += 0.001f;
-
-	//	SetSpriteLTColor(g_VertexBuffer,
-	//		0.0f, 0.0f, SCREEN_WIDTH, SKY_H,
-	//		g_BG.scrl, 0.0f, 1.0f, 1.0f,
-	//		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-
-	//	// ポリゴン描画
-	//	GetDeviceContext()->Draw(4, 0);
-	//}
-
-
-
 
 }
 
@@ -191,12 +198,14 @@ void DrawBG(void)
 //=============================================================================
 // BG構造体の先頭アドレスを取得
 //=============================================================================
-BG* GetBG(void)
+BG* GetBG()
 {
 	return &g_BG[0][0];
 }
 
-
+void SetBG(int x, int y, int id) {
+	g_BG[y][x].spriteId = id;
+}
 
 
 

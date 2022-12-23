@@ -304,6 +304,15 @@ void UpdatePlayer(void)
 					g_Player[i].pos.y = SCREEN_HEIGHT;
 				}
 
+
+				if (GetKeyboardTrigger(DIK_SPACE)) {
+					BG* bg = GetBG();
+					int x = g_Player[i].pos.x*15 / (SCREEN_WIDTH - TILE_SIZE);
+					int y = g_Player[i].pos.y*9 / (SCREEN_HEIGHT - TILE_SIZE);
+					SetBG(x, y, 3);
+				}
+
+
 			}
 		}
 	}
