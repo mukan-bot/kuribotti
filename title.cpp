@@ -1,45 +1,50 @@
 //=============================================================================
 //
-// ƒ^ƒCƒgƒ‹‰æ–Êˆ— [title.cpp]
+// ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢å‡¦ç† [title.cpp]
 // Author : 
 //
 //=============================================================================
 #include "title.h"
 #include "input.h"
 #include "fade.h"
+#include "sound.h"
 
 //*****************************************************************************
-// ƒ}ƒNƒ’è‹`
+// ãƒã‚¯ãƒ­å®šç¾©
 //*****************************************************************************
-#define TEXTURE_WIDTH				(SCREEN_WIDTH)	// ”wŒiƒTƒCƒY
+#define TEXTURE_WIDTH				(SCREEN_WIDTH)	// èƒŒæ™¯ã‚µã‚¤ã‚º
 #define TEXTURE_HEIGHT				(SCREEN_HEIGHT)	// 
-#define TEXTURE_MAX					(3)				// ƒeƒNƒXƒ`ƒƒ‚Ì”
+#define TEXTURE_MAX					(4)				// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®æ•°
 
-#define TEXTURE_WIDTH_LOGO			(480)			// ƒƒSƒTƒCƒY
+#define TEXTURE_WIDTH_LOGO			(480)			// ãƒ­ã‚´ã‚µã‚¤ã‚º
 #define TEXTURE_HEIGHT_LOGO			(80)			// 
+#define TEXTURE_PATTERN_MENU_X	(1)		// ãƒ¢ãƒ¼ãƒ‰ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£å†…åˆ†å‰²æ•°ï¼ˆX)
+#define TEXTURE_PATTERN_MENU_Y	(3)		// ãƒ¢ãƒ¼ãƒ‰ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£å†…åˆ†å‰²æ•°ï¼ˆY)
 
 //*****************************************************************************
-// ƒvƒƒgƒ^ƒCƒvéŒ¾
+// ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 //*****************************************************************************
 
 
 //*****************************************************************************
-// ƒOƒ[ƒoƒ‹•Ï”
+// ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
 //*****************************************************************************
-static ID3D11Buffer				*g_VertexBuffer = NULL;				// ’¸“_î•ñ
-static ID3D11ShaderResourceView	*g_Texture[TEXTURE_MAX] = { NULL };	// ƒeƒNƒXƒ`ƒƒî•ñ
+static ID3D11Buffer				*g_VertexBuffer = NULL;				// é ‚ç‚¹æƒ…å ±
+static ID3D11ShaderResourceView	*g_Texture[TEXTURE_MAX] = { NULL };	// ãƒ†ã‚¯ã‚¹ãƒãƒ£æƒ…å ±
 
 static char *g_TexturName[TEXTURE_MAX] = {
 	"data/TEXTURE/bg000.jpg",
 	"data/TEXTURE/title.png",
 	"data/TEXTURE/effect000.jpg",
+	"data/TEXTURE/title_logo1.png",
+
 };
 
 
-static BOOL						g_Use;						// TRUE:g‚Á‚Ä‚¢‚é  FALSE:–¢g—p
-static float					g_w, g_h;					// •‚Æ‚‚³
-static XMFLOAT3					g_Pos;						// ƒ|ƒŠƒSƒ“‚ÌÀ•W
-static int						g_TexNo;					// ƒeƒNƒXƒ`ƒƒ”Ô†
+static BOOL						g_Use;						// TRUE:ä½¿ã£ã¦ã„ã‚‹  FALSE:æœªä½¿ç”¨
+static float					g_w, g_h;					// å¹…ã¨é«˜ã•
+static XMFLOAT3					g_Pos;						// ãƒãƒªã‚´ãƒ³ã®åº§æ¨™
+static int						g_TexNo;					// ãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·
 
 float	alpha;
 BOOL	flag_alpha;
@@ -49,15 +54,16 @@ static BOOL						g_Load = FALSE;
 static float	effect_dx;
 static float	effect_dy;
 
+static int		g_CheckMode = 0;		// ãƒ¢ãƒ¼ãƒ‰ã®é¸æŠåˆæœŸåŒ–
 
 //=============================================================================
-// ‰Šú‰»ˆ—
+// åˆæœŸåŒ–å‡¦ç†
 //=============================================================================
 HRESULT InitTitle(void)
 {
 	ID3D11Device *pDevice = GetDevice();
 
-	//ƒeƒNƒXƒ`ƒƒ¶¬
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç”Ÿæˆ
 	for (int i = 0; i < TEXTURE_MAX; i++)
 	{
 		g_Texture[i] = NULL;
@@ -70,7 +76,7 @@ HRESULT InitTitle(void)
 	}
 
 
-	// ’¸“_ƒoƒbƒtƒ@¶¬
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ç”Ÿæˆ
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DYNAMIC;
@@ -80,7 +86,7 @@ HRESULT InitTitle(void)
 	GetDevice()->CreateBuffer(&bd, NULL, &g_VertexBuffer);
 
 
-	// •Ï”‚Ì‰Šú‰»
+	// å¤‰æ•°ã®åˆæœŸåŒ–
 	g_Use   = TRUE;
 	g_w     = TEXTURE_WIDTH;
 	g_h     = TEXTURE_HEIGHT;
@@ -98,7 +104,7 @@ HRESULT InitTitle(void)
 }
 
 //=============================================================================
-// I—¹ˆ—
+// çµ‚äº†å‡¦ç†
 //=============================================================================
 void UninitTitle(void)
 {
@@ -123,28 +129,69 @@ void UninitTitle(void)
 }
 
 //=============================================================================
-// XVˆ—
+// æ›´æ–°å‡¦ç†
 //=============================================================================
 void UpdateTitle(void)
 {
-
-	if (GetKeyboardTrigger(DIK_RETURN))
-	{// Enter‰Ÿ‚µ‚½‚çAƒXƒe[ƒW‚ğØ‚è‘Ö‚¦‚é
-		SetFade(FADE_OUT, MODE_GAME);
-	}
-	// ƒQ[ƒ€ƒpƒbƒh‚Å“ü—Íˆ—
-	else if (IsButtonTriggered(0, BUTTON_START))
+	if (g_CheckMode == TITLE_MODE_MAX)
 	{
+		g_CheckMode = 0;
+	}
+	//ä¸Šã®åˆ¶é™ãŒãªã‹ã£ãŸã®ã§è¿½åŠ 
+	if (g_CheckMode == -1) {
+		g_CheckMode = TITLE_MODE_QUIT;
+	}
+
+	if (GetKeyboardTrigger(DIK_DOWN) || IsButtonPressed(0, BUTTON_DOWN))
+	{
+		g_CheckMode++;
+		PlaySound(SOUND_LABEL_SE_select1);
+	}
+
+	if (GetKeyboardTrigger(DIK_UP) || IsButtonPressed(0, BUTTON_UP))
+	{
+		g_CheckMode--;
+		PlaySound(SOUND_LABEL_SE_select1);
+	}
+
+	switch (g_CheckMode)
+	{
+	case 0:		
+	{
+		if (GetKeyboardTrigger(DIK_RETURN))
+		{
+			PlaySound(SOUND_LABEL_SE_select2);
+			SetFade(FADE_OUT, MODE_GAME);
+		}
+		break;
+	}
+
+	case 1:		
+	{
+		if (GetKeyboardTrigger(DIK_RETURN))
+		{
+			PlaySound(SOUND_LABEL_SE_select2);
+			exit(-1);
+		}
+		break;
+	}
+	}
+
+	// ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã§å…¥åŠ›å‡¦ç†
+	if (IsButtonTriggered(0, BUTTON_START))
+	{
+		PlaySound(SOUND_LABEL_SE_select2);
 		SetFade(FADE_OUT, MODE_GAME);
 	}
 	else if (IsButtonTriggered(0, BUTTON_B))
 	{
+		PlaySound(SOUND_LABEL_SE_select2);
 		SetFade(FADE_OUT, MODE_GAME);
 	}
 
 
 
-	// ƒZ[ƒuƒf[ƒ^‚ğƒ[ƒh‚·‚éH
+	// ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ï¼Ÿ
 	if (GetKeyboardTrigger(DIK_L))
 	{
 		SetLoadGame(TRUE);
@@ -152,96 +199,99 @@ void UpdateTitle(void)
 	}
 
 
-	// ƒeƒXƒg‚ÅƒGƒtƒFƒNƒg‚Ì”­¶êŠ‚ğˆÚ“®‚³‚¹‚é
-	float speed = 4.0f;
 
-	if (GetKeyboardPress(DIK_DOWN))
-	{
-		effect_dy += speed;
-	}
-	else if (GetKeyboardPress(DIK_UP))
-	{
-		effect_dy -= speed;
-	}
-
-	if (GetKeyboardPress(DIK_RIGHT))
-	{
-		effect_dx += speed;
-	}
-	else if (GetKeyboardPress(DIK_LEFT))
-	{
-		effect_dx -= speed;
-	}
-
-
-#ifdef _DEBUG	// ƒfƒoƒbƒOî•ñ‚ğ•\¦‚·‚é
-	//PrintDebugProc("Player:ª ¨ « ©@Space\n");
+#ifdef _DEBUG	// ãƒ‡ãƒãƒƒã‚°æƒ…å ±ã‚’è¡¨ç¤ºã™ã‚‹
+	//PrintDebugProc("Player:â†‘ â†’ â†“ â†ã€€Space\n");
 
 #endif
 
 }
 
 //=============================================================================
-// •`‰æˆ—
+// æç”»å‡¦ç†
 //=============================================================================
 void DrawTitle(void)
 {
-	// ’¸“_ƒoƒbƒtƒ@İ’è
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡è¨­å®š
 	UINT stride = sizeof(VERTEX_3D);
 	UINT offset = 0;
 	GetDeviceContext()->IASetVertexBuffers(0, 1, &g_VertexBuffer, &stride, &offset);
 
-	// ƒ}ƒgƒŠƒNƒXİ’è
+	// ãƒãƒˆãƒªã‚¯ã‚¹è¨­å®š
 	SetWorldViewProjection2D();
 
-	// ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒWİ’è
+	// ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–ãƒˆãƒãƒ­ã‚¸è¨­å®š
 	GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	// ƒ}ƒeƒŠƒAƒ‹İ’è
+	// ãƒãƒ†ãƒªã‚¢ãƒ«è¨­å®š
 	MATERIAL material;
 	ZeroMemory(&material, sizeof(material));
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	SetMaterial(material);
 
-	// ƒ^ƒCƒgƒ‹‚Ì”wŒi‚ğ•`‰æ
+	// ã‚¿ã‚¤ãƒˆãƒ«ã®èƒŒæ™¯ã‚’æç”»
 	{
-		// ƒeƒNƒXƒ`ƒƒİ’è
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 		GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[0]);
 
-		// ‚P–‡‚Ìƒ|ƒŠƒSƒ“‚Ì’¸“_‚ÆƒeƒNƒXƒ`ƒƒÀ•W‚ğİ’è
+		// ï¼‘æšã®ãƒãƒªã‚´ãƒ³ã®é ‚ç‚¹ã¨ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™ã‚’è¨­å®š
 		SetSpriteLeftTop(g_VertexBuffer, 0.0f, 0.0f, TEXTURE_WIDTH, TEXTURE_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f);
 
-		// ƒ|ƒŠƒSƒ“•`‰æ
+		// ãƒãƒªã‚´ãƒ³æç”»
 		GetDeviceContext()->Draw(4, 0);
 	}
 
-
-	// ‰ÁŒ¸Z‚ÌƒeƒXƒg
-	SetBlendState(BLEND_MODE_ADD);		// ‰ÁZ‡¬
-//	SetBlendState(BLEND_MODE_SUBTRACT);	// Œ¸Z‡¬
-		
-	// ƒeƒNƒXƒ`ƒƒİ’è
-	GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[2]);
-	
-	for (int i = 0; i < 30; i++)
+	// ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠ
 	{
-		// ‚P–‡‚Ìƒ|ƒŠƒSƒ“‚Ì’¸“_‚ÆƒeƒNƒXƒ`ƒƒÀ•W‚ğİ’è
-		float dx = effect_dx;
-		float dy = effect_dy;
-		float sx = (float)(rand() % 100);
-		float sy = (float)(rand() % 100);
+		float tw = 1.0f / TEXTURE_PATTERN_MENU_X;	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®å¹…
+		float th = 1.0f / TEXTURE_PATTERN_MENU_Y;	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®é«˜ã•
+		float tx = 0.0f;	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®å·¦ä¸ŠXåº§æ¨™
+		float ty = 0.0f;	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®å·¦ä¸ŠYåº§æ¨™
 
-		SetSpriteColor(g_VertexBuffer, dx + sx, dy + sy, 50, 50, 0.0f, 0.0f, 1.0f, 1.0f,
-			XMFLOAT4(1.0f, 0.3f, 1.0f, 0.5f));
 
-		// ƒ|ƒŠƒSƒ“•`‰æ
-		GetDeviceContext()->Draw(4, 0);
+
+		// ã‚²ãƒ¼ãƒ ã‚¹ã‚¿ãƒ¼ãƒˆãƒœã‚¿ãƒ³
+		{
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[3]);
+				SetSpriteColor(g_VertexBuffer,
+				SCREEN_CENTER_X, SCREEN_CENTER_Y, 150.0f, 80.0f,
+				tx, ty, tw, th,
+				XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+			GetDeviceContext()->Draw(4, 0);
+		}
+
+		// ãŠã‚ã‚‹ãƒœã‚¿ãƒ³
+		{
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[3]);
+				SetSpriteColor(g_VertexBuffer,
+				SCREEN_CENTER_X, SCREEN_CENTER_Y + 80.0f * 2, 150.0f, 80.0f,
+				tx, ty + (th * 2), tw, th,
+				XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+			GetDeviceContext()->Draw(4, 0);
+			}
+
+		if (g_CheckMode == 0)		// ã‚²ãƒ¼ãƒ ã‚¹ã‚¿ãƒ¼ãƒˆã‚’é¸æŠä¸­
+		{
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[3]);
+				SetSpriteColor(g_VertexBuffer,
+				SCREEN_CENTER_X, SCREEN_CENTER_Y, 150.0f, 80.0f,
+				tx, ty, tw, th,
+				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+			GetDeviceContext()->Draw(4, 0);
+			}
+
+		if (g_CheckMode == 1)		// ãŠã‚ã‚‹ã‚’é¸æŠä¸­
+		{
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[3]);
+				SetSpriteColor(g_VertexBuffer,
+				SCREEN_CENTER_X, SCREEN_CENTER_Y + 80.0f * 2, 150.0f, 80.0f,
+				tx, ty + (th * 2), tw, th,
+				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+			GetDeviceContext()->Draw(4, 0);
+		}
 	}
-	SetBlendState(BLEND_MODE_ALPHABLEND);	// ”¼“§–¾ˆ—‚ğŒ³‚É–ß‚·
-
 
 }
-
 
 
 

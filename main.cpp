@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// ƒƒCƒ“ˆ— [main.cpp]
+// ãƒ¡ã‚¤ãƒ³å‡¦ç† [main.cpp]
 // Author : 
 //
 //=============================================================================
@@ -25,13 +25,13 @@
 #include "effect.h"
 
 //*****************************************************************************
-// ƒ}ƒNƒ’è‹`
+// ãƒžã‚¯ãƒ­å®šç¾©
 //*****************************************************************************
-#define CLASS_NAME		"AppClass"			// ƒEƒCƒ“ƒhƒE‚ÌƒNƒ‰ƒX–¼
-#define WINDOW_NAME		"DirectX11"			// ƒEƒCƒ“ƒhƒE‚ÌƒLƒƒƒvƒVƒ‡ƒ“–¼
+#define CLASS_NAME		"AppClass"			// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®ã‚¯ãƒ©ã‚¹å
+#define WINDOW_NAME		"DirectX11"			// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³å
 
 //*****************************************************************************
-// ƒvƒƒgƒ^ƒCƒvéŒ¾
+// ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
 //*****************************************************************************
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow);
@@ -41,32 +41,33 @@ void Draw(void);
 
 
 //*****************************************************************************
-// ƒOƒ[ƒoƒ‹•Ï”:
+// ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°:
 //*****************************************************************************
 long g_MouseX = 0;
 long g_MouseY = 0;
 
 
 #ifdef _DEBUG
-int		g_CountFPS;							// FPSƒJƒEƒ“ƒ^
-char	g_DebugStr[2048] = WINDOW_NAME;		// ƒfƒoƒbƒO•¶Žš•\Ž¦—p
+int		g_CountFPS;							// FPSã‚«ã‚¦ãƒ³ã‚¿
+char	g_DebugStr[2048] = WINDOW_NAME;		// ãƒ‡ãƒãƒƒã‚°æ–‡å­—è¡¨ç¤ºç”¨
 
 #endif
 
-int	g_Mode = MODE_TITLE;					// ‹N“®Žž‚Ì‰æ–Ê‚ðÝ’è
+int	g_Mode = MODE_TITLE;					// èµ·å‹•æ™‚ã®ç”»é¢ã‚’è¨­å®š
 
 BOOL g_LoadGame = FALSE;					// NewGame
 
+BOOL g_win = false;
 
 //=============================================================================
-// ƒƒCƒ“ŠÖ”
+// ãƒ¡ã‚¤ãƒ³é–¢æ•°
 //=============================================================================
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	UNREFERENCED_PARAMETER(hPrevInstance);	// –³‚­‚Ä‚à—Ç‚¢‚¯‚ÇAŒx‚ªo‚éi–¢Žg—péŒ¾j
-	UNREFERENCED_PARAMETER(lpCmdLine);		// –³‚­‚Ä‚à—Ç‚¢‚¯‚ÇAŒx‚ªo‚éi–¢Žg—péŒ¾j
+	UNREFERENCED_PARAMETER(hPrevInstance);	// ç„¡ãã¦ã‚‚è‰¯ã„ã‘ã©ã€è­¦å‘ŠãŒå‡ºã‚‹ï¼ˆæœªä½¿ç”¨å®£è¨€ï¼‰
+	UNREFERENCED_PARAMETER(lpCmdLine);		// ç„¡ãã¦ã‚‚è‰¯ã„ã‘ã©ã€è­¦å‘ŠãŒå‡ºã‚‹ï¼ˆæœªä½¿ç”¨å®£è¨€ï¼‰
 
-	// ŽžŠÔŒv‘ª—p
+	// æ™‚é–“è¨ˆæ¸¬ç”¨
 	DWORD dwExecLastTime;
 	DWORD dwFPSLastTime;
 	DWORD dwCurrentTime;
@@ -89,67 +90,67 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	HWND		hWnd;
 	MSG			msg;
 	
-	// ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚Ì“o˜^
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®ç™»éŒ²
 	RegisterClassEx(&wcex);
 
-	// ƒEƒBƒ“ƒhƒE‚Ìì¬
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆ
 	hWnd = CreateWindow(CLASS_NAME,
 		WINDOW_NAME,
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,																		// ƒEƒBƒ“ƒhƒE‚Ì¶À•W
-		CW_USEDEFAULT,																		// ƒEƒBƒ“ƒhƒE‚ÌãÀ•W
-		SCREEN_WIDTH + GetSystemMetrics(SM_CXDLGFRAME) * 2,									// ƒEƒBƒ“ƒhƒE‰¡•
-		SCREEN_HEIGHT + GetSystemMetrics(SM_CXDLGFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION),	// ƒEƒBƒ“ƒhƒEc•
+		CW_USEDEFAULT,																		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å·¦åº§æ¨™
+		CW_USEDEFAULT,																		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä¸Šåº§æ¨™
+		SCREEN_WIDTH + GetSystemMetrics(SM_CXDLGFRAME) * 2,									// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æ¨ªå¹…
+		SCREEN_HEIGHT + GetSystemMetrics(SM_CXDLGFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION),	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç¸¦å¹…
 		NULL,
 		NULL,
 		hInstance,
 		NULL);
 
-	// ƒEƒBƒ“ƒhƒEƒ‚[ƒh‚©ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒ‚[ƒh‚©‚Ìˆ—
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ã‹ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ¢ãƒ¼ãƒ‰ã‹ã®å‡¦ç†
 	BOOL mode = TRUE;
 
-	//int id = MessageBox(NULL, "Windowƒ‚[ƒh‚ÅƒvƒŒƒC‚µ‚Ü‚·‚©H", "‹N“®ƒ‚[ƒh", MB_YESNOCANCEL | MB_ICONQUESTION);
+	//int id = MessageBox(NULL, "Windowãƒ¢ãƒ¼ãƒ‰ã§ãƒ—ãƒ¬ã‚¤ã—ã¾ã™ã‹ï¼Ÿ", "èµ·å‹•ãƒ¢ãƒ¼ãƒ‰", MB_YESNOCANCEL | MB_ICONQUESTION);
 	//switch (id)
 	//{
-	//case IDYES:		// Yes‚È‚çWindowƒ‚[ƒh‚Å‹N“®
+	//case IDYES:		// Yesãªã‚‰Windowãƒ¢ãƒ¼ãƒ‰ã§èµ·å‹•
 	//	mode = TRUE;
 	//	break;
-	//case IDNO:		// No‚È‚çƒtƒ‹ƒXƒNƒŠ[ƒ“ƒ‚[ƒh‚Å‹N“®
-	//	mode = FALSE;	// ŠÂ‹«‚É‚æ‚Á‚Ä“®‚©‚È‚¢Ž–‚ª‚ ‚é
+	//case IDNO:		// Noãªã‚‰ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ¢ãƒ¼ãƒ‰ã§èµ·å‹•
+	//	mode = FALSE;	// ç’°å¢ƒã«ã‚ˆã£ã¦å‹•ã‹ãªã„äº‹ãŒã‚ã‚‹
 	//	break;
-	//case IDCANCEL:	// CANCEL‚È‚çI—¹
+	//case IDCANCEL:	// CANCELãªã‚‰çµ‚äº†
 	//default:
 	//	return -1;
 	//	break;
 	//}
 
-	// ‰Šú‰»ˆ—(ƒEƒBƒ“ƒhƒE‚ðì¬‚µ‚Ä‚©‚çs‚¤)
+	// åˆæœŸåŒ–å‡¦ç†(ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä½œæˆã—ã¦ã‹ã‚‰è¡Œã†)
 	if(FAILED(Init(hInstance, hWnd, mode)))
 	{
 		return -1;
 	}
 
-	// ƒtƒŒ[ƒ€ƒJƒEƒ“ƒg‰Šú‰»
-	timeBeginPeriod(1);	// •ª‰ð”\‚ðÝ’è
-	dwExecLastTime = dwFPSLastTime = timeGetTime();	// ƒVƒXƒeƒ€Žž‚ðƒ~ƒŠ•b’PˆÊ‚ÅŽæ“¾
+	// ãƒ•ãƒ¬ãƒ¼ãƒ ã‚«ã‚¦ãƒ³ãƒˆåˆæœŸåŒ–
+	timeBeginPeriod(1);	// åˆ†è§£èƒ½ã‚’è¨­å®š
+	dwExecLastTime = dwFPSLastTime = timeGetTime();	// ã‚·ã‚¹ãƒ†ãƒ æ™‚åˆ»ã‚’ãƒŸãƒªç§’å˜ä½ã§å–å¾—
 	dwCurrentTime = dwFrameCount = 0;
 
-	// ƒEƒCƒ“ƒhƒE‚Ì•\Ž¦(‰Šú‰»ˆ—‚ÌŒã‚ÉŒÄ‚Î‚È‚¢‚Æ‘Ê–Ú)
+	// ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤º(åˆæœŸåŒ–å‡¦ç†ã®å¾Œã«å‘¼ã°ãªã„ã¨é§„ç›®)
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 	
-	// ƒƒbƒZ[ƒWƒ‹[ƒv
+	// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ«ãƒ¼ãƒ—
 	while(1)
 	{
 		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if(msg.message == WM_QUIT)
-			{// PostQuitMessage()‚ªŒÄ‚Î‚ê‚½‚çƒ‹[ƒvI—¹
+			{// PostQuitMessage()ãŒå‘¼ã°ã‚ŒãŸã‚‰ãƒ«ãƒ¼ãƒ—çµ‚äº†
 				break;
 			}
 			else
 			{
-				// ƒƒbƒZ[ƒW‚Ì–|–ó‚Æ‘—o
+				// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ç¿»è¨³ã¨é€å‡º
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
@@ -158,28 +159,28 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		{
 			dwCurrentTime = timeGetTime();
 
-			if ((dwCurrentTime - dwFPSLastTime) >= 1000)	// 1•b‚²‚Æ‚ÉŽÀs
+			if ((dwCurrentTime - dwFPSLastTime) >= 1000)	// 1ç§’ã”ã¨ã«å®Ÿè¡Œ
 			{
 #ifdef _DEBUG
 				g_CountFPS = dwFrameCount;
 #endif
-				dwFPSLastTime = dwCurrentTime;				// FPS‚ð‘ª’è‚µ‚½Žž‚ð•Û‘¶
-				dwFrameCount = 0;							// ƒJƒEƒ“ƒg‚ðƒNƒŠƒA
+				dwFPSLastTime = dwCurrentTime;				// FPSã‚’æ¸¬å®šã—ãŸæ™‚åˆ»ã‚’ä¿å­˜
+				dwFrameCount = 0;							// ã‚«ã‚¦ãƒ³ãƒˆã‚’ã‚¯ãƒªã‚¢
 			}
 
-			if ((dwCurrentTime - dwExecLastTime) >= (1000 / 60))	// 1/60•b‚²‚Æ‚ÉŽÀs
+			if ((dwCurrentTime - dwExecLastTime) >= (1000 / 60))	// 1/60ç§’ã”ã¨ã«å®Ÿè¡Œ
 			{
-				dwExecLastTime = dwCurrentTime;	// ˆ—‚µ‚½Žž‚ð•Û‘¶
+				dwExecLastTime = dwCurrentTime;	// å‡¦ç†ã—ãŸæ™‚åˆ»ã‚’ä¿å­˜
 
-#ifdef _DEBUG	// ƒfƒoƒbƒO”Å‚ÌŽž‚¾‚¯FPS‚ð•\Ž¦‚·‚é
+#ifdef _DEBUG	// ãƒ‡ãƒãƒƒã‚°ç‰ˆã®æ™‚ã ã‘FPSã‚’è¡¨ç¤ºã™ã‚‹
 				wsprintf(g_DebugStr, WINDOW_NAME);
 				wsprintf(&g_DebugStr[strlen(g_DebugStr)], " FPS:%d", g_CountFPS);
 #endif
 
-				Update();			// XVˆ—
-				Draw();				// •`‰æˆ—
+				Update();			// æ›´æ–°å‡¦ç†
+				Draw();				// æç”»å‡¦ç†
 
-#ifdef _DEBUG	// ƒfƒoƒbƒO”Å‚ÌŽž‚¾‚¯•\Ž¦‚·‚é
+#ifdef _DEBUG	// ãƒ‡ãƒãƒƒã‚°ç‰ˆã®æ™‚ã ã‘è¡¨ç¤ºã™ã‚‹
 				wsprintf(&g_DebugStr[strlen(g_DebugStr)], " MX:%d MY:%d", GetMousePosX(), GetMousePosY());
 				SetWindowText(hWnd, g_DebugStr);
 #endif
@@ -189,19 +190,19 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 	}
 
-	timeEndPeriod(1);				// •ª‰ð”\‚ð–ß‚·
+	timeEndPeriod(1);				// åˆ†è§£èƒ½ã‚’æˆ»ã™
 
-	// ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚Ì“o˜^‚ð‰ðœ
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®ç™»éŒ²ã‚’è§£é™¤
 	UnregisterClass(CLASS_NAME, wcex.hInstance);
 
-	// I—¹ˆ—
+	// çµ‚äº†å‡¦ç†
 	Uninit();
 
 	return (int)msg.wParam;
 }
 
 //=============================================================================
-// ƒvƒƒV[ƒWƒƒ
+// ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 //=============================================================================
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -233,81 +234,81 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 //=============================================================================
-// ‰Šú‰»ˆ—
+// åˆæœŸåŒ–å‡¦ç†
 //=============================================================================
 HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 {
-	// •`‰æ‚Ì‰Šú‰»
+	// æç”»ã®åˆæœŸåŒ–
 	InitRenderer(hInstance, hWnd, bWindow);
 
-	// ƒJƒƒ‰‚Ì‰Šú‰»
+	// ã‚«ãƒ¡ãƒ©ã®åˆæœŸåŒ–
 	InitCamera();
 
-	// ƒ‰ƒCƒg‚ð—LŒø‰»
+	// ãƒ©ã‚¤ãƒˆã‚’æœ‰åŠ¹åŒ–
 	SetLightEnable(FALSE);
 
-	// ”w–Êƒ|ƒŠƒSƒ“‚ðƒJƒŠƒ“ƒO
+	// èƒŒé¢ãƒãƒªã‚´ãƒ³ã‚’ã‚«ãƒªãƒ³ã‚°
 	SetCullingMode(CULL_MODE_BACK);
 
-	// “ü—Íˆ—‚Ì‰Šú‰»
+	// å…¥åŠ›å‡¦ç†ã®åˆæœŸåŒ–
 	InitInput(hInstance, hWnd);
 
-	// ƒTƒEƒ“ƒhˆ—‚Ì‰Šú‰»
+	// ã‚µã‚¦ãƒ³ãƒ‰å‡¦ç†ã®åˆæœŸåŒ–
 	InitSound(hWnd);
 
-	// ƒtƒF[ƒhˆ—‚Ì‰Šú‰»
+	// ãƒ•ã‚§ãƒ¼ãƒ‰å‡¦ç†ã®åˆæœŸåŒ–
 	InitFade();
 
 
-	// Å‰‚Ìƒ‚[ƒh‚ðƒZƒbƒg
-	SetMode(g_Mode);	// ‚±‚±‚ÍSetMode‚Ì‚Ü‚Ü‚ÅI
+	// æœ€åˆã®ãƒ¢ãƒ¼ãƒ‰ã‚’ã‚»ãƒƒãƒˆ
+	SetMode(g_Mode);	// ã“ã“ã¯SetModeã®ã¾ã¾ã§ï¼
 
 	return S_OK;
 }
 
 //=============================================================================
-// I—¹ˆ—
+// çµ‚äº†å‡¦ç†
 //=============================================================================
 void Uninit(void)
 {
-	// I—¹‚Ìƒ‚[ƒh‚ðƒZƒbƒg
+	// çµ‚äº†ã®ãƒ¢ãƒ¼ãƒ‰ã‚’ã‚»ãƒƒãƒˆ
 	SetMode(MODE_MAX);
 
-	// ƒtƒF[ƒh‚ÌI—¹ˆ—
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã®çµ‚äº†å‡¦ç†
 	UninitFade();
 
-	// ƒTƒEƒ“ƒh‚ÌI—¹ˆ—
+	// ã‚µã‚¦ãƒ³ãƒ‰ã®çµ‚äº†å‡¦ç†
 	UninitSound();
 
-	// “ü—Í‚ÌI—¹ˆ—
+	// å…¥åŠ›ã®çµ‚äº†å‡¦ç†
 	UninitInput();
 
-	// ƒJƒƒ‰‚ÌI—¹ˆ—
+	// ã‚«ãƒ¡ãƒ©ã®çµ‚äº†å‡¦ç†
 	UninitCamera();
 
-	// ƒŒƒ“ƒ_ƒ‰[‚ÌI—¹ˆ—
+	// ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã®çµ‚äº†å‡¦ç†
 	UninitRenderer();
 }
 
 //=============================================================================
-// XVˆ—
+// æ›´æ–°å‡¦ç†
 //=============================================================================
 void Update(void)
 {
-	// “ü—Í‚ÌXVˆ—
+	// å…¥åŠ›ã®æ›´æ–°å‡¦ç†
 	UpdateInput();
 
-	// ƒJƒƒ‰XV
+	// ã‚«ãƒ¡ãƒ©æ›´æ–°
 	UpdateCamera();
 
-	// ƒ‚[ƒh‚É‚æ‚Á‚Äˆ—‚ð•ª‚¯‚é
+	// ãƒ¢ãƒ¼ãƒ‰ã«ã‚ˆã£ã¦å‡¦ç†ã‚’åˆ†ã‘ã‚‹
 	switch (g_Mode)
 	{
-	case MODE_TITLE:		// ƒ^ƒCƒgƒ‹‰æ–Ê‚ÌXV
+	case MODE_TITLE:		// ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®æ›´æ–°
 		UpdateTitle();
 		break;
 
-	case MODE_GAME:			// ƒQ[ƒ€‰æ–Ê‚ÌXV
+	case MODE_GAME:			// ã‚²ãƒ¼ãƒ ç”»é¢ã®æ›´æ–°
 		UpdateBG();
 		UpdatePlayer();
 		UpdateEnemy();
@@ -316,65 +317,65 @@ void Update(void)
 		UpdateScore();
 		break;
 
-	case MODE_RESULT:		// ƒŠƒUƒ‹ƒg‰æ–Ê‚ÌXV
+	case MODE_RESULT:		// ãƒªã‚¶ãƒ«ãƒˆç”»é¢ã®æ›´æ–°
 		UpdateResult();
 		break;
 	}
 
-	UpdateFade();			// ƒtƒF[ƒh‚ÌXVˆ—
+	UpdateFade();			// ãƒ•ã‚§ãƒ¼ãƒ‰ã®æ›´æ–°å‡¦ç†
 }
 
 //=============================================================================
-// •`‰æˆ—
+// æç”»å‡¦ç†
 //=============================================================================
 void Draw(void)
 {
-	// ƒoƒbƒNƒoƒbƒtƒ@ƒNƒŠƒA
+	// ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã‚¯ãƒªã‚¢
 	Clear();
 
 	SetCamera();
 
-	// 2D‚Ì•¨‚ð•`‰æ‚·‚éˆ—
+	// 2Dã®ç‰©ã‚’æç”»ã™ã‚‹å‡¦ç†
 	SetViewPort(TYPE_FULL_SCREEN);
 
-	// Z”äŠr‚È‚µ
+	// Zæ¯”è¼ƒãªã—
 	SetDepthEnable(FALSE);
 
-	// ƒ‰ƒCƒeƒBƒ“ƒO‚ð–³Œø
+	// ãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ã‚’ç„¡åŠ¹
 	SetLightEnable(FALSE);
 
 
-	// ƒ‚[ƒh‚É‚æ‚Á‚Äˆ—‚ð•ª‚¯‚é
+	// ãƒ¢ãƒ¼ãƒ‰ã«ã‚ˆã£ã¦å‡¦ç†ã‚’åˆ†ã‘ã‚‹
 	switch (g_Mode)
 	{
-	case MODE_TITLE:		// ƒ^ƒCƒgƒ‹‰æ–Ê‚Ì•`‰æ
+	case MODE_TITLE:		// ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®æç”»
 		DrawTitle();
 		break;
 
-	case MODE_GAME:			// ƒQ[ƒ€‰æ–Ê‚Ì•`‰æ
+	case MODE_GAME:			// ã‚²ãƒ¼ãƒ ç”»é¢ã®æç”»
 		DrawBG();
-		DrawBullet();		// d‚È‚é‡”Ô‚ðˆÓŽ¯‚µ‚Ä‚Ë
+		DrawBullet();		// é‡ãªã‚‹é †ç•ªã‚’æ„è­˜ã—ã¦ã­
 		DrawEnemy();
 		DrawPlayer();
 		DrawEffect();
 		DrawScore();
 		break;
 
-	case MODE_RESULT:		// ƒŠƒUƒ‹ƒg‰æ–Ê‚Ì•`‰æ
+	case MODE_RESULT:		// ãƒªã‚¶ãƒ«ãƒˆç”»é¢ã®æç”»
 		DrawResult();
 		break;
 	}
 
 
-	DrawFade();				// ƒtƒF[ƒh‰æ–Ê‚Ì•`‰æ
+	DrawFade();				// ãƒ•ã‚§ãƒ¼ãƒ‰ç”»é¢ã®æç”»
 
 
 #ifdef _DEBUG
-	// ƒfƒoƒbƒO•\Ž¦
+	// ãƒ‡ãƒãƒƒã‚°è¡¨ç¤º
 	DrawDebugProc();
 #endif
 
-	// ƒoƒbƒNƒoƒbƒtƒ@Aƒtƒƒ“ƒgƒoƒbƒtƒ@“ü‚ê‘Ö‚¦
+	// ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã€ãƒ•ãƒ­ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡å…¥ã‚Œæ›¿ãˆ
 	Present();
 }
 
@@ -401,52 +402,54 @@ char* GetDebugStr(void)
 
 
 //=============================================================================
-// ƒ‚[ƒh‚ÌÝ’è
+// ãƒ¢ãƒ¼ãƒ‰ã®è¨­å®š
 //=============================================================================
 void SetMode(int mode)
 {
-	// ƒ‚[ƒh‚ð•Ï‚¦‚é‘O‚É‘S•”ƒƒ‚ƒŠ‚ð‰ð•ú‚µ‚¿‚á‚¤
-	StopSound();			// ‚Ü‚¸‹È‚ðŽ~‚ß‚é
+	// ãƒ¢ãƒ¼ãƒ‰ã‚’å¤‰ãˆã‚‹å‰ã«å…¨éƒ¨ãƒ¡ãƒ¢ãƒªã‚’è§£æ”¾ã—ã¡ã‚ƒã†
+	StopSound();			// ã¾ãšæ›²ã‚’æ­¢ã‚ã‚‹
 
-	// ƒ‚[ƒh‚ð•Ï‚¦‚é‘O‚É‘S•”ƒƒ‚ƒŠ‚ð‰ð•ú‚µ‚¿‚á‚¤
+	// ãƒ¢ãƒ¼ãƒ‰ã‚’å¤‰ãˆã‚‹å‰ã«å…¨éƒ¨ãƒ¡ãƒ¢ãƒªã‚’è§£æ”¾ã—ã¡ã‚ƒã†
 
-	// ƒ^ƒCƒgƒ‹‰æ–Ê‚ÌI—¹ˆ—
+	// ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®çµ‚äº†å‡¦ç†
 	UninitTitle();
 
-	// BG‚ÌI—¹ˆ—
+	// BGã®çµ‚äº†å‡¦ç†
 	UninitBG();
 
-	// ƒvƒŒƒCƒ„[‚ÌI—¹ˆ—
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®çµ‚äº†å‡¦ç†
 	UninitPlayer();
 
-	// ƒGƒlƒ~[‚ÌI—¹ˆ—
+	// ã‚¨ãƒãƒŸãƒ¼ã®çµ‚äº†å‡¦ç†
 	UninitEnemy();
 
-	// ƒoƒŒƒbƒg‚ÌI—¹ˆ—
+	// ãƒãƒ¬ãƒƒãƒˆã®çµ‚äº†å‡¦ç†
 	UninitBullet();
 
-	// ƒXƒRƒA‚ÌI—¹ˆ—
+	// ã‚¹ã‚³ã‚¢ã®çµ‚äº†å‡¦ç†
 	UninitScore();
 
-	// ƒŠƒUƒ‹ƒg‚ÌI—¹ˆ—
+	// ãƒªã‚¶ãƒ«ãƒˆã®çµ‚äº†å‡¦ç†
 	UninitResult();
 
-	// ƒGƒtƒFƒNƒg‚ÌI—¹ˆ—
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®çµ‚äº†å‡¦ç†
 	UninitEffect();
 
 
-	g_Mode = mode;	// ŽŸ‚Ìƒ‚[ƒh‚ðƒZƒbƒg‚µ‚Ä‚¢‚é
+	g_Mode = mode;	// æ¬¡ã®ãƒ¢ãƒ¼ãƒ‰ã‚’ã‚»ãƒƒãƒˆã—ã¦ã„ã‚‹
 
 	switch (g_Mode)
 	{
 	case MODE_TITLE:
-		// ƒ^ƒCƒgƒ‹‰æ–Ê‚Ì‰Šú‰»
+		// ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã®åˆæœŸåŒ–
 		InitTitle();
-		//PlaySound(SOUND_LABEL_BGM_maou);
+
+		PlaySound(SOUND_LABEL_BGM_title);
+
 		break;
 
 	case MODE_GAME:
-		// ƒQ[ƒ€‰æ–Ê‚Ì‰Šú‰»
+		// ã‚²ãƒ¼ãƒ ç”»é¢ã®åˆæœŸåŒ–
 		InitBG();
 		InitPlayer();
 		InitEnemy();
@@ -454,19 +457,24 @@ void SetMode(int mode)
 		InitEffect();
 		InitScore();
 
-		// ƒ[ƒhƒQ[ƒ€‚¾‚Á‚½‚ç‚·‚×‚Ä‚Ì‰Šú‰»‚ªI‚í‚Á‚½Œã‚ÉƒZ[ƒuƒf[ƒ^‚ð“Ç‚Ýž‚Þ
+		// ãƒ­ãƒ¼ãƒ‰ã‚²ãƒ¼ãƒ ã ã£ãŸã‚‰ã™ã¹ã¦ã®åˆæœŸåŒ–ãŒçµ‚ã‚ã£ãŸå¾Œã«ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
 		if (g_LoadGame == TRUE)
 		{
 			LoadData();
-			g_LoadGame = FALSE;		// ƒ[ƒh‚µ‚½‚©‚çƒtƒ‰ƒO‚ðClear‚·‚é
+			g_LoadGame = FALSE;		// ãƒ­ãƒ¼ãƒ‰ã—ãŸã‹ã‚‰ãƒ•ãƒ©ã‚°ã‚’Clearã™ã‚‹
 		}
 
-		//PlaySound(SOUND_LABEL_BGM_sample001);
+		PlaySound(SOUND_LABEL_BGM_game);
 		break;
 
 	case MODE_RESULT:
 		InitResult();
-		//PlaySound(SOUND_LABEL_BGM_sample002);
+		if (g_win) {
+			PlaySound(SOUND_LABEL_BGM_resultKati);
+		}
+		else {
+			PlaySound(SOUND_LABEL_BGM_resultMake);
+		}
 		break;
 
 	case MODE_MAX:
@@ -475,7 +483,7 @@ void SetMode(int mode)
 }
 
 //=============================================================================
-// ƒ‚[ƒh‚ÌŽæ“¾
+// ãƒ¢ãƒ¼ãƒ‰ã®å–å¾—
 //=============================================================================
 int GetMode(void)
 {
@@ -484,7 +492,7 @@ int GetMode(void)
 
 
 //=============================================================================
-// ƒjƒ…[ƒQ[ƒ€‚©ƒ[ƒhƒQ[ƒ€‚©‚ðƒZƒbƒg‚·‚é
+// ãƒ‹ãƒ¥ãƒ¼ã‚²ãƒ¼ãƒ ã‹ãƒ­ãƒ¼ãƒ‰ã‚²ãƒ¼ãƒ ã‹ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
 //=============================================================================
 void SetLoadGame(BOOL flg)
 {

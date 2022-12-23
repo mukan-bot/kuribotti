@@ -11,21 +11,21 @@
 //*****************************************************************************
 // サウンドファイル
 //*****************************************************************************
-enum 
+enum
 {
-	SOUND_LABEL_BGM_sample000,	// BGM0
-	SOUND_LABEL_BGM_sample001,	// BGM1
-	SOUND_LABEL_BGM_sample002,	// BGM2
-	SOUND_LABEL_SE_bomb000,		// 爆発音
-	SOUND_LABEL_SE_defend000,	// 
-	SOUND_LABEL_SE_defend001,	// 
-	SOUND_LABEL_SE_hit000,		// 
-	SOUND_LABEL_SE_laser000,	// 
-	SOUND_LABEL_SE_lockon000,	// 
-	SOUND_LABEL_SE_shot000,		// 
-	SOUND_LABEL_SE_shot001,		// 
+	SOUND_LABEL_BGM_resultKati,	// BGM0
+	SOUND_LABEL_BGM_resultMake,	// BGM1
+	SOUND_LABEL_BGM_game,		// BGM2
+	SOUND_LABEL_BGM_title,		// BGM3
 
-	SOUND_LABEL_BGM_maou,		// BGM Maou
+	SOUND_LABEL_SE_select1,	// 選択１
+	SOUND_LABEL_SE_select2 ,// 選択２
+
+	SOUND_LABEL_SE_wana1,// 罠発動タイプ１ 
+	SOUND_LABEL_SE_wana2,// 罠発動タイプ２
+	SOUND_LABEL_SE_wana3,// 罠発動タイプ３
+
+
 
 	SOUND_LABEL_MAX,
 };

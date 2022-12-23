@@ -6,6 +6,12 @@
 #include "sound.h"
 
 //*****************************************************************************
+// マクロ定義
+//*****************************************************************************
+#define VOLUME_BGM	(0.01f)
+#define VOLUME_SE	(0.2f)
+
+//*****************************************************************************
 // パラメータ構造体定義
 //*****************************************************************************
 typedef struct
@@ -29,22 +35,21 @@ IXAudio2SourceVoice *g_apSourceVoice[SOUND_LABEL_MAX] = {};	// ソースボイス
 BYTE *g_apDataAudio[SOUND_LABEL_MAX] = {};					// オーディオデータ
 DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 
-// 各音素材のパラメータ
-SOUNDPARAM g_aParam[SOUND_LABEL_MAX] =
+// 各音素材のパラメータ（-１BGM：0SE）
+SOUNDPARAM g_aParam[SOUND_LABEL_MAX] = 
 {
-	{ (char*)"data/BGM/sample000.wav", -1 },	// BGM0
-	{ (char*)"data/BGM/bgm_maoudamashii_neorock73.wav", -1 },	// BGM1
-	{ (char*)"data/BGM/sample001.wav", -1 },	// BGM2
-	{ (char*)"data/SE/bomb000.wav", 0 },		// 弾発射音
-	{ (char*)"data/SE/defend000.wav", 0 },		// 弾発射音
-	{ (char*)"data/SE/defend001.wav", 0 },		// 弾発射音
-	{ (char*)"data/SE/hit000.wav", 0 },			// 弾発射音
-	{ (char*)"data/SE/laser000.wav", 0 },		// 弾発射音
-	{ (char*)"data/SE/lockon000.wav", 0 },		// 弾発射音
-	{ (char*)"data/SE/shot000.wav", 0 },		// 弾発射音
-	{ (char*)"data/SE/shot001.wav", 0 },		// ヒット音
+	{ (char*)"data/BGM/8bit_result_Kati.wav", -1 },	// 
+	{ (char*)"data/BGM/8bit_result_Make.wav", -1 },	// 
+	{ (char*)"data/BGM/8bit_game.wav", -1 },	// 
+	{ (char*)"data/BGM/8bit_title.wav", -1 },	// 
 
-	{ (char*)"data/BGM/maou.wav", -1 },			// BGM Maou
+
+	{ (char*)"data/SE/botton1.wav", 0 },	// 
+	{ (char*)"data/SE/botton2.wav", 0 },	//
+	{ (char*)"data/SE/ゴニョゴニョ.wav", 0 },	//
+	{ (char*)"data/SE/ネチョネチョ.wav", 0 },	//
+	{ (char*)"data/SE/破壊音.wav", 0 },	//
+
 
 };
 
@@ -253,6 +258,14 @@ void PlaySound(int label)
 	// オーディオバッファの登録
 	g_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
 
+	// サウンドの音量調整
+	if (g_aParam[label].nCntLoop == -1) {
+		g_apSourceVoice[label]->SetVolume(VOLUME_BGM);
+	}
+	else {
+		g_apSourceVoice[label]->SetVolume(VOLUME_SE);
+	}
+
 	// 再生
 	g_apSourceVoice[label]->Start(0);
 
@@ -380,4 +393,3 @@ HRESULT ReadChunkData(HANDLE hFile, void *pBuffer, DWORD dwBuffersize, DWORD dwB
 	
 	return S_OK;
 }
-
