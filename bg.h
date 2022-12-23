@@ -19,7 +19,7 @@ struct BG
 	int spriteId;
 };
 
-#define TILE_SIZE			(10)	
+#define TILE_SIZE			(60)	
 #define	SKY_H	(150.0f)	// ‹ó‚Ìƒ|ƒŠƒSƒ“‚Ì‚‚³
 
 
