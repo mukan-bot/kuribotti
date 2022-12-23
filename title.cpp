@@ -14,7 +14,7 @@
 //*****************************************************************************
 #define TEXTURE_WIDTH				(SCREEN_WIDTH)	// 背景サイズ
 #define TEXTURE_HEIGHT				(SCREEN_HEIGHT)	// 
-#define TEXTURE_MAX					(4)				// テクスチャの数
+#define TEXTURE_MAX					(5)				// テクスチャの数
 
 #define TEXTURE_WIDTH_LOGO			(480)			// ロゴサイズ
 #define TEXTURE_HEIGHT_LOGO			(80)			// 
@@ -33,10 +33,11 @@ static ID3D11Buffer				*g_VertexBuffer = NULL;				// 頂点情報
 static ID3D11ShaderResourceView	*g_Texture[TEXTURE_MAX] = { NULL };	// テクスチャ情報
 
 static char *g_TexturName[TEXTURE_MAX] = {
-	"data/TEXTURE/bg000.jpg",
+	"data/TEXTURE/title_overView.png",
 	"data/TEXTURE/title.png",
-	"data/TEXTURE/effect000.jpg",
-	"data/TEXTURE/title_logo1.png",
+	"data/TEXTURE/title_finger.png",
+	//"data/TEXTURE/start_logo.png",
+	//"data/TEXTURE/exit_logo.png",
 };
 
 
@@ -242,8 +243,8 @@ void DrawTitle(void)
 
 	// メニュー選択
 	{
-		float tw = 1.0f / TEXTURE_PATTERN_MENU_X;	// テクスチャの幅
-		float th = 1.0f / TEXTURE_PATTERN_MENU_Y;	// テクスチャの高さ
+		float tw = 1.0f;	// テクスチャの幅
+		float th = 1.0f;	// テクスチャの高さ
 		float tx = 0.0f;	// テクスチャの左上X座標
 		float ty = 0.0f;	// テクスチャの左上Y座標
 
@@ -261,7 +262,7 @@ void DrawTitle(void)
 
 		// おわるボタン
 		{
-			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[3]);
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[4]);
 				SetSpriteColor(g_VertexBuffer,
 				SCREEN_CENTER_X, SCREEN_CENTER_Y + 80.0f * 2, 150.0f, 80.0f,
 				tx, ty + (th * 2), tw, th,
@@ -271,9 +272,9 @@ void DrawTitle(void)
 
 		if (g_CheckMode == 0)		// ゲームスタートを選択中
 		{
-			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[3]);
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[2]);
 				SetSpriteColor(g_VertexBuffer,
-				SCREEN_CENTER_X, SCREEN_CENTER_Y, 150.0f, 80.0f,
+				SCREEN_CENTER_X + 70.0f, SCREEN_CENTER_Y + 150.0f, 150.0f, 80.0f,
 				tx, ty, tw, th,
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 			GetDeviceContext()->Draw(4, 0);
@@ -281,9 +282,9 @@ void DrawTitle(void)
 
 		if (g_CheckMode == 1)		// おわるを選択中
 		{
-			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[3]);
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[2]);
 				SetSpriteColor(g_VertexBuffer,
-				SCREEN_CENTER_X, SCREEN_CENTER_Y + 80.0f * 2, 150.0f, 80.0f,
+				SCREEN_CENTER_X + 70.0f, SCREEN_CENTER_Y + 125.0f * 2, 150.0f, 80.0f,
 				tx, ty + (th * 2), tw, th,
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 			GetDeviceContext()->Draw(4, 0);
