@@ -17,8 +17,6 @@
 struct BG
 {
 	int spriteId;
-
-
 };
 
 #define TILE_SIZE			(10)	
