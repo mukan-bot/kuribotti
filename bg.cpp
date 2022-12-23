@@ -28,8 +28,8 @@ static ID3D11ShaderResourceView	*g_Texture[TEXTURE_MAX] = { NULL };	// ÉeÉNÉXÉ`É
 
 static char *g_TexturName[TEXTURE_MAX] = {
 	"data/TEXTURE/yuka01.jpg",
-	"data/TEXTURE/sky000.jpg",
-	"data/TEXTURE/sky001.jpg",
+	"data/TEXTURE/skyenmuty.jpg",
+	"data/TEXTURE/skyenmuty.jpg",
 	"data/TEXTURE/gokiburi_hoihoi.png",
 };
 

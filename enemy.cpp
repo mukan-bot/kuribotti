@@ -218,7 +218,6 @@ void UpdateEnemy(void)
 			}
 
 
-
 			// 移動が終わったらエネミーとの当たり判定
 			{
 				if (bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x + 1].spriteId = 2) {
