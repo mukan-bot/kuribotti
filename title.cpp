@@ -13,7 +13,7 @@
 //*****************************************************************************
 #define TEXTURE_WIDTH				(SCREEN_WIDTH)	// 背景サイズ
 #define TEXTURE_HEIGHT				(SCREEN_HEIGHT)	// 
-#define TEXTURE_MAX					(3)				// テクスチャの数
+#define TEXTURE_MAX					(4)				// テクスチャの数
 
 #define TEXTURE_WIDTH_LOGO			(480)			// ロゴサイズ
 #define TEXTURE_HEIGHT_LOGO			(80)			// 
@@ -169,7 +169,7 @@ void UpdateTitle(void)
 	}
 
 	// ゲームパッドで入力処理
-	else if (IsButtonTriggered(0, BUTTON_START))
+	if (IsButtonTriggered(0, BUTTON_START))
 	{
 		SetFade(FADE_OUT, MODE_GAME);
 	}
