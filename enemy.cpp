@@ -21,7 +21,7 @@
 #define TEXTURE_PATTERN_DIVIDE_Y	(2)		// アニメパターンのテクスチャ内分割数（Y)
 #define ANIM_PATTERN_NUM			(TEXTURE_PATTERN_DIVIDE_X*TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
 #define ANIM_WAIT					(4)		// アニメーションの切り替わるWait値
-
+#define WAIT						(10)
 
 //*****************************************************************************
 // プロトタイプ宣言
@@ -81,12 +81,16 @@ HRESULT InitEnemy(void)
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		g_Enemy[i].use = TRUE;
-
+		g_Enemy[i].isTrapped = false;
+		g_Enemy[i].Dir = 0;
+		g_Enemy[i].x = 0;
+		g_Enemy[i].y = 0;
+		g_Enemy[i].distance = 25;
+		g_Enemy[i].targetID = i;
 		g_Enemy[i].enemyType = 0;
-
 		g_Enemy[i].countAnim = 0;
 		g_Enemy[i].patternAnim = 0;
-
+		g_Enemy[i].wait = 0;
 		g_EnemyCnt++;
 	}
 
@@ -132,7 +136,7 @@ void UpdateEnemy(void)
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		// 生きてるエネミーだけ処理をする
-		if (g_Enemy[i].use == TRUE && !g_Enemy[i].isTrapped)
+		if (g_Enemy[i].use == TRUE && !g_Enemy[i].isTrapped && g_Enemy[i].wait > WAIT)
 		{
 			g_EnemyCnt++;
 			// アニメーション  
@@ -146,29 +150,32 @@ void UpdateEnemy(void)
 
 			switch (g_Enemy[i].enemyType) {
 			case 0:		//時計回りに座標確認
-				if (g_Enemy[i].Dir != DOWN && g_Enemy[i].y > 0 && bg[(g_Enemy[i].y - 1) * TILE_SIZE + g_Enemy[i].x].spriteId != 1) {
+				if (g_Enemy[i].Dir != DOWN && g_Enemy[i].y > 0 && bg[(g_Enemy[i].y - 1) * TILE_AMOUNT_W + g_Enemy[i].x].spriteId != 1) {
 					g_Enemy[i].y--;
 					g_Enemy[i].Dir = UP;
 					break;
 				}
-				if (g_Enemy[i].Dir != LEFT && !bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x + 1].spriteId == 1 && g_Enemy[i].x < TILE_SIZE - 1) {
+				else if (g_Enemy[i].Dir != LEFT && !bg[(g_Enemy[i].y) * TILE_AMOUNT_W + g_Enemy[i].x + 1].spriteId == 1 && g_Enemy[i].x < TILE_AMOUNT_W - 1) {
 					g_Enemy[i].x++;
 					g_Enemy[i].Dir = RIGHT;
 					break;
 				}
-				if (g_Enemy[i].Dir != UP && !bg[(g_Enemy[i].y + 1) * TILE_SIZE + g_Enemy[i].x + 1].spriteId == 1 && g_Enemy[i].y < TILE_SIZE - 1) {
+				else if (g_Enemy[i].Dir != UP && !bg[(g_Enemy[i].y + 1) * TILE_AMOUNT_W + g_Enemy[i].x + 1].spriteId == 1 && g_Enemy[i].y < TILE_AMOUNT_H - 1) {
 					g_Enemy[i].y++;
 					g_Enemy[i].Dir = DOWN;
 					break;
 				}
-				if (g_Enemy[i].Dir != RIGHT && !bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x - 1].spriteId == 1 && g_Enemy[i].x > 0) {
+				else if (g_Enemy[i].Dir != RIGHT && !bg[(g_Enemy[i].y) * TILE_AMOUNT_W + g_Enemy[i].x - 1].spriteId == 1 && g_Enemy[i].x > 0) {
 					g_Enemy[i].x--;
 					g_Enemy[i].Dir = LEFT;
 					break;
 				}
-				g_Enemy[i].Dir = (g_Enemy[i].Dir + 2) % 4;
-				g_Enemy[i].x -= (g_Enemy[i].Dir - 2) % 2;
-				g_Enemy[i].y -= (g_Enemy[i].Dir - 1) % 2;
+				else {
+					g_Enemy[i].Dir = (g_Enemy[i].Dir + 2) % 4;
+					g_Enemy[i].x -= (g_Enemy[i].Dir - 2) % 2;
+					g_Enemy[i].y -= (g_Enemy[i].Dir - 1) % 2;
+					break;
+				}
 				break;
 
 			case 1:		//相手から遠い軸から処理
@@ -221,7 +228,7 @@ void UpdateEnemy(void)
 
 			// 移動が終わったらエネミーとの当たり判定
 			{
-				if (bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x + 1].spriteId = 2) {
+				if (bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x + 1].spriteId == 2) {
 					g_Enemy[i].isTrapped = true;
 				}
 			}
@@ -229,10 +236,10 @@ void UpdateEnemy(void)
 
 	}
 	// エネミー全滅チェック
-	/*if (g_EnemyCnt <= 0)
+	if (g_EnemyCnt <= 0)
 	{
 		SetFade(FADE_OUT, MODE_RESULT);
-	}*/
+	}
 
 #ifdef _DEBUG	// デバッグ情報を表示する
 
@@ -273,8 +280,8 @@ void DrawEnemy(void)
 			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_Enemy[i].enemyType]);
 
 			//エネミーの位置やテクスチャー座標を反映
-			float px = g_Enemy[i].x;	// エネミーの表示位置X
-			float py = g_Enemy[i].y;	// エネミーの表示位置Y
+			float px = g_Enemy[i].x * TILE_SIZE;	// エネミーの表示位置X
+			float py = g_Enemy[i].y * TILE_SIZE;	// エネミーの表示位置Y
 			float pw = TILE_SIZE;		// エネミーの表示幅
 			float ph = TILE_SIZE;		// エネミーの表示高さ
 

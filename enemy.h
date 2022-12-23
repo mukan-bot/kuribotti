@@ -38,6 +38,7 @@ struct ENEMY
 	float		countAnim;		// アニメーションカウント
 	int			patternAnim;	// アニメーションパターンナンバー
 	int			enemyType;		// エネミー番号
+	int			wait;
 };
 
 
