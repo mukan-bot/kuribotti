@@ -151,7 +151,7 @@ void DrawBG(void)
 
 			// １枚のポリゴンの頂点とテクスチャ座標を設定
 			SetSpriteLTColor(g_VertexBuffer,
-				TILE_DRAW_SIZE * x*5, TILE_DRAW_SIZE * y*5, TILE_DRAW_SIZE*5, TILE_DRAW_SIZE*5,
+				SCREEN_HEIGHT / TILE_DRAW_SIZE * x, SCREEN_HEIGHT / TILE_DRAW_SIZE * y, SCREEN_HEIGHT / TILE_DRAW_SIZE, SCREEN_HEIGHT/TILE_DRAW_SIZE,
 				0.0f, 0.0f, 1.0f, 1.0f,
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 

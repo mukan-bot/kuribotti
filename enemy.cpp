@@ -17,8 +17,8 @@
 #define TEXTURE_HEIGHT				(200/2)	// 
 #define TEXTURE_MAX					(2)		// テクスチャの数
 
-#define TEXTURE_PATTERN_DIVIDE_X	(1)		// アニメパターンのテクスチャ内分割数（X)
-#define TEXTURE_PATTERN_DIVIDE_Y	(1)		// アニメパターンのテクスチャ内分割数（Y)
+#define TEXTURE_PATTERN_DIVIDE_X	(2)		// アニメパターンのテクスチャ内分割数（X)
+#define TEXTURE_PATTERN_DIVIDE_Y	(2)		// アニメパターンのテクスチャ内分割数（Y)
 #define ANIM_PATTERN_NUM			(TEXTURE_PATTERN_DIVIDE_X*TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
 #define ANIM_WAIT					(4)		// アニメーションの切り替わるWait値
 
@@ -134,6 +134,7 @@ void UpdateEnemy(void)
 		// 生きてるエネミーだけ処理をする
 		if (g_Enemy[i].use == TRUE && !g_Enemy[i].isTrapped)
 		{
+			g_EnemyCnt++;
 			// アニメーション  
 			g_Enemy[i].countAnim += 1.0f;
 			if (g_Enemy[i].countAnim > ANIM_WAIT)
@@ -142,6 +143,7 @@ void UpdateEnemy(void)
 				// パターンの切り替え
 				g_Enemy[i].patternAnim = (g_Enemy[i].patternAnim + 1) % ANIM_PATTERN_NUM;
 			}
+
 			switch (g_Enemy[i].enemyType) {
 			case 0:		//時計回りに座標確認
 				if (g_Enemy[i].Dir != DOWN && g_Enemy[i].y > 0 && bg[(g_Enemy[i].y - 1) * TILE_SIZE + g_Enemy[i].x].spriteId != 1) {
@@ -174,6 +176,9 @@ void UpdateEnemy(void)
 					for (int e = 0; e < ENEMY_MAX; e++) {
 						if (g_Enemy[e].enemyType != g_Enemy[i].enemyType && g_Enemy[e].use == true) {
 							if (g_Enemy[i].distance > GetMDistance(g_Enemy[i].x, g_Enemy[i].y, g_Enemy[e].x, g_Enemy[e].y)) {
+								if (GetMDistance(g_Enemy[i].x, g_Enemy[i].y, g_Enemy[e].x, g_Enemy[e].y) == 0) {
+									//endgame
+								}
 								g_Enemy[i].targetID = e;
 							}
 						}
@@ -216,25 +221,18 @@ void UpdateEnemy(void)
 
 			// 移動が終わったらエネミーとの当たり判定
 			{
-				PLAYER* player = GetPlayer();
-
-				// エネミーの数分当たり判定を行う
-				for (int j = 0; j < ENEMY_MAX; j++)
-				{
-
+				if (bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x + 1].spriteId = 2) {
+					g_Enemy[i].isTrapped = true;
 				}
-
-
-				g_EnemyCnt++;		// 生きてた敵の数
 			}
 		}
 
 	}
 	// エネミー全滅チェック
-	if (g_EnemyCnt <= 0)
+	/*if (g_EnemyCnt <= 0)
 	{
 		SetFade(FADE_OUT, MODE_RESULT);
-	}
+	}*/
 
 #ifdef _DEBUG	// デバッグ情報を表示する
 
@@ -275,26 +273,19 @@ void DrawEnemy(void)
 			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_Enemy[i].enemyType]);
 
 			//エネミーの位置やテクスチャー座標を反映
-			//float px = g_Enemy[i].pos.x - bg->pos.x;	// エネミーの表示位置X
-			//float py = g_Enemy[i].pos.y - bg->pos.y;	// エネミーの表示位置Y
+			float px = g_Enemy[i].x;	// エネミーの表示位置X
+			float py = g_Enemy[i].y;	// エネミーの表示位置Y
 			float pw = TILE_SIZE;		// エネミーの表示幅
 			float ph = TILE_SIZE;		// エネミーの表示高さ
 
 			// アニメーション用
-			//float tw = 1.0f / TEXTURE_PATTERN_DIVIDE_X;	// テクスチャの幅
-			//float th = 1.0f / TEXTURE_PATTERN_DIVIDE_Y;	// テクスチャの高さ
-			//float tx = (float)(g_Player[i].patternAnim % TEXTURE_PATTERN_DIVIDE_X) * tw;	// テクスチャの左上X座標
-			//float ty = (float)(g_Player[i].patternAnim / TEXTURE_PATTERN_DIVIDE_X) * th;	// テクスチャの左上Y座標
+			float tw = 1.0f / TEXTURE_PATTERN_DIVIDE_X;	// テクスチャの幅
+			float th = 1.0f / TEXTURE_PATTERN_DIVIDE_Y;	// テクスチャの高さ
+			float tx = (float)(g_Enemy[i].patternAnim % TEXTURE_PATTERN_DIVIDE_X) * tw;	// テクスチャの左上X座標
+			float ty = (float)(g_Enemy[i].patternAnim / TEXTURE_PATTERN_DIVIDE_X) * th;	// テクスチャの左上Y座標
 
-			float tw = 1.0f;	// テクスチャの幅
-			float th = 1.0f;	// テクスチャの高さ
-			float tx = 0.0f;	// テクスチャの左上X座標
-			float ty = 0.0f;	// テクスチャの左上Y座標
-
-			//// １枚のポリゴンの頂点とテクスチャ座標を設定
-			//SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
-			//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			//	g_Enemy[i].rot.z);
+			// １枚のポリゴンの頂点とテクスチャ座標を設定
+			SetSpriteLeftTop(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th);
 
 			// ポリゴン描画
 			GetDeviceContext()->Draw(4, 0);
