@@ -34,7 +34,7 @@ static char *g_TexturName[TEXTURE_MAX] = {
 
 
 static BOOL	g_Load = FALSE;		// 初期化を行ったかのフラグ
-static BG	g_BG[TILE_SIZE][TILE_SIZE];
+static BG	g_BG[SCREEN_HEIGHT /TILE_SIZE][SCREEN_WIDTH / TILE_SIZE];
 
 
 
@@ -67,8 +67,8 @@ HRESULT InitBG(void)
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	GetDevice()->CreateBuffer(&bd, NULL, &g_VertexBuffer);
 
-	for (int y = 0; y < TILE_SIZE; y++) {
-		for (int x = 0; x < TILE_SIZE; x++) {
+	for (int y = 0; y < SCREEN_HEIGHT / TILE_SIZE; y++) {
+		for (int x = 0; x < SCREEN_WIDTH / TILE_SIZE; x++) {
 			g_BG[y][x].spriteId = 0;
 		}
 	}
@@ -143,15 +143,15 @@ void DrawBG(void)
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	SetMaterial(material);
 
-	for (int y = 0; y < TILE_SIZE; y++) {
-		for (int x = 0; x < TILE_SIZE; x++) {
+	for (int y = 0; y < SCREEN_HEIGHT / TILE_SIZE; y++) {
+		for (int x = 0; x < SCREEN_WIDTH / TILE_SIZE; x++) {
 			
 			// テクスチャ設定
 			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_BG[y][x].spriteId]);
 
 			// １枚のポリゴンの頂点とテクスチャ座標を設定
 			SetSpriteLTColor(g_VertexBuffer,
-				SCREEN_HEIGHT / TILE_DRAW_SIZE * x, SCREEN_HEIGHT / TILE_DRAW_SIZE * y, SCREEN_HEIGHT / TILE_DRAW_SIZE, SCREEN_HEIGHT/TILE_DRAW_SIZE,
+				TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE,
 				0.0f, 0.0f, 1.0f, 1.0f,
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 
