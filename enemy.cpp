@@ -9,6 +9,7 @@
 #include "player.h"
 #include "fade.h"
 #include "collision.h"
+#include "score.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -136,6 +137,7 @@ int GetMDistance(int x1, int y1, int x2, int y2) {
 void UpdateEnemy(void)
 {
 	g_EnemyCnt = 0;	// 生きてるエネミーの数
+
 	BG* bg = GetBG();
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
@@ -144,7 +146,7 @@ void UpdateEnemy(void)
 		if (g_Enemy[i].use == TRUE && !g_Enemy[i].isTrapped && g_Enemy[i].wait > WAIT)
 		{
 			g_Enemy[i].wait = 0;
-			g_EnemyCnt++;
+
 			// アニメーション  
 			g_Enemy[i].countAnim += 1.0f;
 			if (g_Enemy[i].countAnim > ANIM_WAIT)
@@ -211,12 +213,12 @@ void UpdateEnemy(void)
 					}
 				}
 				else {
-					if (g_Enemy[i].Dir != LEFT && g_Enemy[i].x - g_Enemy[g_Enemy[i].targetID].x < 0) {
+					if (g_Enemy[i].x - g_Enemy[g_Enemy[i].targetID].x < 0) {
 						g_Enemy[i].x++;
 						g_Enemy[i].Dir = RIGHT;
 						break;
 					}
-					else if (g_Enemy[i].Dir != RIGHT) {
+					else {
 						g_Enemy[i].x--;
 						g_Enemy[i].Dir = LEFT;
 						break;
@@ -231,21 +233,24 @@ void UpdateEnemy(void)
 			}
 
 
-
-			// 移動が終わったらエネミーとの当たり判定
-			{
-				if (bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x + 1].spriteId == 2) {
-					g_Enemy[i].isTrapped = true;
-				}
+		}
+		// 移動が終わったらエネミーとの当たり判定
+		{
+			if (bg[(g_Enemy[i].y) * TILE_AMOUNT_W + g_Enemy[i].x].spriteId == 3 &&g_Enemy[i].isTrapped != true) {
+				g_Enemy[i].isTrapped = true;
+				AddScore(100);
+				g_EnemyCnt++;
 			}
 		}
+		
 
 	}
+
 	// エネミー全滅チェック
-	//if (g_EnemyCnt <= 0)
-	//{
-	//	SetFade(FADE_OUT, MODE_RESULT);
-	//}
+	if (g_EnemyCnt == 2)
+	{
+		SetFade(FADE_OUT, MODE_RESULT);
+	}
 
 #ifdef _DEBUG	// デバッグ情報を表示する
 
