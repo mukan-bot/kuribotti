@@ -11,7 +11,7 @@
 //*****************************************************************************
 #define TEXTURE_WIDTH				(8000)			// (SCREEN_WIDTH)	// 背景サイズ
 #define TEXTURE_HEIGHT				(1080)			// (SCREEN_HEIGHT)	// 
-#define TEXTURE_MAX					(3)				// テクスチャの数
+#define TEXTURE_MAX					(4)				// テクスチャの数
 
 		
 #define TILE_DRAW_SIZE		(10)
@@ -30,6 +30,7 @@ static char *g_TexturName[TEXTURE_MAX] = {
 	"data/TEXTURE/map.png",
 	"data/TEXTURE/sky000.jpg",
 	"data/TEXTURE/sky001.jpg",
+	"data/TEXTURE/gokiburi_hoihoi.png",
 };
 
 
@@ -146,6 +147,8 @@ void DrawBG(void)
 	for (int y = 0; y < TILE_SIZE; y++) {
 		for (int x = 0; x < TILE_SIZE; x++) {
 			
+
+
 			// テクスチャ設定
 			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_BG[y][x].spriteId]);
 
@@ -157,7 +160,6 @@ void DrawBG(void)
 
 			// ポリゴン描画
 			GetDeviceContext()->Draw(4, 0);
-			
 		}
 	}
 

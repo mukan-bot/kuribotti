@@ -16,8 +16,8 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define TEXTURE_WIDTH				(200/2)	// キャラサイズ
-#define TEXTURE_HEIGHT				(200/2)	// 
+#define TEXTURE_WIDTH				(200/3)	// キャラサイズ
+#define TEXTURE_HEIGHT				(200/3)	// 
 #define TEXTURE_MAX					(2)		// テクスチャの数
 
 #define TEXTURE_PATTERN_DIVIDE_X	(3)		// アニメパターンのテクスチャ内分割数（X)
@@ -47,7 +47,7 @@ static ID3D11Buffer				*g_VertexBuffer = NULL;				// 頂点情報
 static ID3D11ShaderResourceView	*g_Texture[TEXTURE_MAX] = { NULL };	// テクスチャ情報
 
 static char *g_TexturName[TEXTURE_MAX] = {
-	"data/TEXTURE/char01.png",
+	"data/TEXTURE/1.png",
 	"data/TEXTURE/shadow000.jpg",
 };
 
@@ -272,7 +272,6 @@ void UpdatePlayer(void)
 						g_Player[i].jumpCnt = 0;
 						g_Player[i].jumpY = 0.0f;
 					}
-
 				}
 				// ジャンプボタン押した？
 				else if ((g_Player[i].jump == FALSE) && (GetKeyboardTrigger(DIK_J)))
@@ -284,7 +283,6 @@ void UpdatePlayer(void)
 
 
 				// MAP外チェック
-				//BG* bg = GetBG();
 
 				if (g_Player[i].pos.x < 0.0f)
 				{
@@ -294,6 +292,16 @@ void UpdatePlayer(void)
 				if (g_Player[i].pos.y < 0.0f)
 				{
 					g_Player[i].pos.y = 0.0f;
+				}
+
+				if (g_Player[i].pos.x > SCREEN_WIDTH)
+				{
+					g_Player[i].pos.x = SCREEN_WIDTH;
+				}
+
+				if (g_Player[i].pos.y > SCREEN_HEIGHT)
+				{
+					g_Player[i].pos.y = SCREEN_HEIGHT;
 				}
 
 			}
@@ -345,30 +353,30 @@ void DrawPlayer(void)
 		{									// Yes
 
 			{	// 影表示
-				SetBlendState(BLEND_MODE_SUBTRACT);	// 減算合成
+				//SetBlendState(BLEND_MODE_SUBTRACT);	// 減算合成
 
-				// テクスチャ設定
-				GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[1]);
+				//// テクスチャ設定
+				//GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[1]);
 
-				//float px = g_Player[i].pos.x - bg->pos.x;	// プレイヤーの表示位置X
-				//float py = g_Player[i].pos.y - bg->pos.y;	// プレイヤーの表示位置Y
-				float pw = g_Player[i].w;		// プレイヤーの表示幅
-				float ph = g_Player[i].h/4;		// プレイヤーの表示高さ
-				//py += 50.0f;		// 足元に表示
+				////float px = g_Player[i].pos.x - bg->pos.x;	// プレイヤーの表示位置X
+				////float py = g_Player[i].pos.y - bg->pos.y;	// プレイヤーの表示位置Y
+				//float pw = g_Player[i].w;		// プレイヤーの表示幅
+				//float ph = g_Player[i].h/4;		// プレイヤーの表示高さ
+				////py += 50.0f;		// 足元に表示
 
-				float tw = 1.0f;	// テクスチャの幅
-				float th = 1.0f;	// テクスチャの高さ
-				float tx = 0.0f;	// テクスチャの左上X座標
-				float ty = 0.0f;	// テクスチャの左上Y座標
+				//float tw = 1.0f;	// テクスチャの幅
+				//float th = 1.0f;	// テクスチャの高さ
+				//float tx = 0.0f;	// テクスチャの左上X座標
+				//float ty = 0.0f;	// テクスチャの左上Y座標
 
-				// １枚のポリゴンの頂点とテクスチャ座標を設定
-				//SetSpriteColor(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
-				//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+				//// １枚のポリゴンの頂点とテクスチャ座標を設定
+				////SetSpriteColor(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
+				////	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 
-				// ポリゴン描画
-				GetDeviceContext()->Draw(4, 0);
+				//// ポリゴン描画
+				//GetDeviceContext()->Draw(4, 0);
 
-				SetBlendState(BLEND_MODE_ALPHABLEND);	// 半透明処理を元に戻す
+				//SetBlendState(BLEND_MODE_ALPHABLEND);	// 半透明処理を元に戻す
 
 			}
 
@@ -382,8 +390,8 @@ void DrawPlayer(void)
 			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_Player[i].texNo]);
 
 			//プレイヤーの位置やテクスチャー座標を反映
-			//float px = g_Player[i].pos.x - bg->pos.x;	// プレイヤーの表示位置X
-			//float py = g_Player[i].pos.y - bg->pos.y;	// プレイヤーの表示位置Y
+			float px = g_Player[i].pos.x;	// プレイヤーの表示位置X
+			float py = g_Player[i].pos.y;	// プレイヤーの表示位置Y
 			float pw = g_Player[i].w;		// プレイヤーの表示幅
 			float ph = g_Player[i].h;		// プレイヤーの表示高さ
 
@@ -401,9 +409,7 @@ void DrawPlayer(void)
 			//float ty = 0.0f;	// テクスチャの左上Y座標
 
 			// １枚のポリゴンの頂点とテクスチャ座標を設定
-			//SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
-			//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-			//	g_Player[i].rot.z);
+			SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),g_Player[i].rot.z);
 
 			// ポリゴン描画
 			GetDeviceContext()->Draw(4, 0);
