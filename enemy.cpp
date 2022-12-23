@@ -111,39 +111,14 @@ HRESULT InitEnemy(void)
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		g_Enemy[i].use = TRUE;
-		g_Enemy[i].pos = XMFLOAT3(200.0f + i*200.0f, 100.0f, 0.0f);	// 中心点から表示
-		g_Enemy[i].rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		g_Enemy[i].scl = XMFLOAT3(1.0f, 1.0f, 1.0f);
-		g_Enemy[i].w = TEXTURE_WIDTH;
-		g_Enemy[i].h = TEXTURE_HEIGHT;
-		g_Enemy[i].texNo = 0;
+
+		g_Enemy[i].enemyType = 0;
 
 		g_Enemy[i].countAnim = 0;
 		g_Enemy[i].patternAnim = 0;
 
-		g_Enemy[i].move = XMFLOAT3(4.0f, 0.0f, 0.0f);		// 移動量
-
-		g_Enemy[i].time = 0.0f;			// 線形補間用のタイマーをクリア
-		g_Enemy[i].tblNo = 0;			// 再生する行動データテーブルNoをセット
-		g_Enemy[i].tblMax = 0;			// 再生する行動データテーブルのレコード数をセット
-
 		g_EnemyCnt++;
 	}
-
-	// 0番だけ線形補間で動かしてみる
-	g_Enemy[0].time = 0.0f;		// 線形補間用のタイマーをクリア
-	g_Enemy[0].tblNo = 0;		// 再生するアニメデータの先頭アドレスをセット
-	g_Enemy[0].tblMax = sizeof(g_MoveTbl0) / sizeof(INTERPOLATION_DATA);	// 再生するアニメデータのレコード数をセット
-
-	// 1番だけ線形補間で動かしてみる
-	g_Enemy[1].time = 0.0f;		// 線形補間用のタイマーをクリア
-	g_Enemy[1].tblNo = 1;		// 再生するアニメデータの先頭アドレスをセット
-	g_Enemy[1].tblMax = sizeof(g_MoveTbl1) / sizeof(INTERPOLATION_DATA);	// 再生するアニメデータのレコード数をセット
-
-	// 2番だけ線形補間で動かしてみる
-	g_Enemy[2].time = 0.0f;		// 線形補間用のタイマーをクリア
-	g_Enemy[2].tblNo = 2;		// 再生するアニメデータの先頭アドレスをセット
-	g_Enemy[2].tblMax = sizeof(g_MoveTbl2) / sizeof(INTERPOLATION_DATA);	// 再生するアニメデータのレコード数をセット
 
 	g_Load = TRUE;
 	return S_OK;
@@ -174,21 +149,21 @@ void UninitEnemy(void)
 	g_Load = FALSE;
 }
 
+int GetMDistance(int x1, int y1, int x2, int y2) {
+	return abs(x1 - x2) + abs(y1 - y2);
+}
 //=============================================================================
 // 更新処理
 //=============================================================================
 void UpdateEnemy(void)
 {
 	g_EnemyCnt = 0;	// 生きてるエネミーの数
-
+	BG* bg = GetBG();
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		// 生きてるエネミーだけ処理をする
-		if (g_Enemy[i].use == TRUE)
+		if (g_Enemy[i].use == TRUE && !g_Enemy[i].isTrapped)
 		{
-			// 地形との当たり判定用に座標のバックアップを取っておく
-			XMFLOAT3 pos_old = g_Enemy[i].pos;
-
 			// アニメーション  
 			g_Enemy[i].countAnim += 1.0f;
 			if (g_Enemy[i].countAnim > ANIM_WAIT)
@@ -197,48 +172,79 @@ void UpdateEnemy(void)
 				// パターンの切り替え
 				g_Enemy[i].patternAnim = (g_Enemy[i].patternAnim + 1) % ANIM_PATTERN_NUM;
 			}
-
-			// 移動処理
-			if (g_Enemy[i].tblMax > 0)	// 線形補間を実行する？
-			{	// 線形補間の処理
-				int nowNo = (int)g_Enemy[i].time;			// 整数分であるテーブル番号を取り出している
-				int maxNo = g_Enemy[i].tblMax;				// 登録テーブル数を数えている
-				int nextNo = (nowNo + 1) % maxNo;			// 移動先テーブルの番号を求めている
-				INTERPOLATION_DATA* tbl = g_MoveTblAdr[g_Enemy[i].tblNo];	// 行動テーブルのアドレスを取得
-				
-				XMVECTOR nowPos = XMLoadFloat3(&tbl[nowNo].pos);	// XMVECTORへ変換
-				XMVECTOR nowRot = XMLoadFloat3(&tbl[nowNo].rot);	// XMVECTORへ変換
-				XMVECTOR nowScl = XMLoadFloat3(&tbl[nowNo].scl);	// XMVECTORへ変換
-				
-				XMVECTOR Pos = XMLoadFloat3(&tbl[nextNo].pos) - nowPos;	// XYZ移動量を計算している
-				XMVECTOR Rot = XMLoadFloat3(&tbl[nextNo].rot) - nowRot;	// XYZ回転量を計算している
-				XMVECTOR Scl = XMLoadFloat3(&tbl[nextNo].scl) - nowScl;	// XYZ拡大率を計算している
-				
-				float nowTime = g_Enemy[i].time - nowNo;	// 時間部分である少数を取り出している
-				
-				Pos *= nowTime;								// 現在の移動量を計算している
-				Rot *= nowTime;								// 現在の回転量を計算している
-				Scl *= nowTime;								// 現在の拡大率を計算している
-
-				// 計算して求めた移動量を現在の移動テーブルXYZに足している＝表示座標を求めている
-				XMStoreFloat3(&g_Enemy[i].pos, nowPos + Pos);
-
-				// 計算して求めた回転量を現在の移動テーブルに足している
-				XMStoreFloat3(&g_Enemy[i].rot, nowRot + Rot);
-
-				// 計算して求めた拡大率を現在の移動テーブルに足している
-				XMStoreFloat3(&g_Enemy[i].scl, nowScl + Scl);
-				g_Enemy[i].w = TEXTURE_WIDTH * g_Enemy[i].scl.x;
-				g_Enemy[i].h = TEXTURE_HEIGHT * g_Enemy[i].scl.y;
-
-				// frameを使て時間経過処理をする
-				g_Enemy[i].time += 1.0f / tbl[nowNo].frame;	// 時間を進めている
-				if ((int)g_Enemy[i].time >= maxNo)			// 登録テーブル最後まで移動したか？
-				{
-					g_Enemy[i].time -= maxNo;				// ０番目にリセットしつつも小数部分を引き継いでいる
+			switch (g_Enemy[i].enemyType) {
+			case 0:		//時計回りに座標確認
+				if (g_Enemy[i].Dir != DOWN && g_Enemy[i].y > 0 && bg[(g_Enemy[i].y - 1) * TILE_SIZE + g_Enemy[i].x].spriteId != 1 ) {
+					g_Enemy[i].y--;
+					g_Enemy[i].Dir = UP;
+					break;
 				}
-
+				if (g_Enemy[i].Dir != LEFT && !bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x + 1].spriteId == 1 && g_Enemy[i].x < TILE_SIZE-1) {
+					g_Enemy[i].x++;
+					g_Enemy[i].Dir = RIGHT;
+					break;
+				}
+				if (g_Enemy[i].Dir != UP && !bg[(g_Enemy[i].y + 1) * TILE_SIZE + g_Enemy[i].x + 1].spriteId == 1 && g_Enemy[i].y < TILE_SIZE - 1) {
+					g_Enemy[i].y++;
+					g_Enemy[i].Dir = DOWN;
+					break;
+				}
+				if (g_Enemy[i].Dir != RIGHT && !bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x - 1].spriteId == 1 && g_Enemy[i].x > 0) {
+					g_Enemy[i].x--;
+					g_Enemy[i].Dir = LEFT;
+					break;
+				}
+				g_Enemy[i].Dir = (g_Enemy[i].Dir + 2) % 4;
+				g_Enemy[i].x -= (g_Enemy[i].Dir - 2) % 2;
+				g_Enemy[i].y -= (g_Enemy[i].Dir - 1) % 2;
+				break;
+					
+			case 1:		//相手から遠い軸から処理
+				if (g_Enemy[i].targetID == i || g_Enemy[g_Enemy[i].targetID].use == false) {
+					for (int e = 0; e < ENEMY_MAX; e++) {
+						if (g_Enemy[e].enemyType != g_Enemy[i].enemyType && g_Enemy[e].use == true) {
+							if (g_Enemy[i].distance > GetMDistance(g_Enemy[i].x, g_Enemy[i].y, g_Enemy[e].x, g_Enemy[e].y)) {
+								g_Enemy[i].targetID = e;
+							}
+						}
+					}
+				}
+				if (abs(g_Enemy[i].x - g_Enemy[g_Enemy[i].targetID].x) < abs(g_Enemy[i].y - g_Enemy[g_Enemy[i].targetID].y)) {
+					if (g_Enemy[i].Dir != DOWN && g_Enemy[i].y - g_Enemy[g_Enemy[i].targetID].y < 0) {
+						g_Enemy[i].y--;
+						g_Enemy[i].Dir = UP;
+						break;
+					}
+					else if(g_Enemy[i].Dir != UP) {
+						g_Enemy[i].y++;
+						g_Enemy[i].Dir = DOWN;
+						break;
+						
+					}
+				}
+				else {
+					if(g_Enemy[i].Dir != LEFT && g_Enemy[i].x - g_Enemy[g_Enemy[i].targetID].x < 0) {
+						g_Enemy[i].x++;
+						g_Enemy[i].Dir = RIGHT;
+						break;
+					}
+				}
+				
+				if (g_Enemy[i].Dir != RIGHT && !bg[(g_Enemy[i].y) * TILE_SIZE + g_Enemy[i].x - 1].spriteId == 1 && g_Enemy[i].x > 0) {
+					g_Enemy[i].x--;
+					g_Enemy[i].Dir = LEFT;
+					break;
+				}
+				g_Enemy[i].Dir = (g_Enemy[i].Dir + 2) % 4;
+				g_Enemy[i].x -= (g_Enemy[i].Dir - 2) % 2;
+				g_Enemy[i].y -= (g_Enemy[i].Dir - 1) % 2;
+				break;
+				break;
+			default:
+				break;
 			}
+			
+			
 
 			// 移動が終わったらエネミーとの当たり判定
 			{
@@ -310,11 +316,11 @@ void DrawEnemy(void)
 		if (g_Enemy[i].use == TRUE)			// このエネミーが使われている？
 		{									// Yes
 			// テクスチャ設定
-			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_Enemy[i].texNo]);
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_Enemy[i].enemyType]);
 
 			//エネミーの位置やテクスチャー座標を反映
-			float px = g_Enemy[i].pos.x - bg->pos.x;	// エネミーの表示位置X
-			float py = g_Enemy[i].pos.y - bg->pos.y;	// エネミーの表示位置Y
+			//float px = g_Enemy[i].pos.x - bg->pos.x;	// エネミーの表示位置X
+			//float py = g_Enemy[i].pos.y - bg->pos.y;	// エネミーの表示位置Y
 			float pw = g_Enemy[i].w;		// エネミーの表示幅
 			float ph = g_Enemy[i].h;		// エネミーの表示高さ
 
@@ -329,10 +335,10 @@ void DrawEnemy(void)
 			float tx = 0.0f;	// テクスチャの左上X座標
 			float ty = 0.0f;	// テクスチャの左上Y座標
 
-			// １枚のポリゴンの頂点とテクスチャ座標を設定
-			SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
-				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-				g_Enemy[i].rot.z);
+			//// １枚のポリゴンの頂点とテクスチャ座標を設定
+			//SetSpriteColorRotation(g_VertexBuffer, px, py, pw, ph, tx, ty, tw, th,
+			//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			//	g_Enemy[i].rot.z);
 
 			// ポリゴン描画
 			GetDeviceContext()->Draw(4, 0);

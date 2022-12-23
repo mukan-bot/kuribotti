@@ -265,25 +265,25 @@ void DrawEffect(void)
 			{
 				if (effectWk[i].pParticle[n].isFinish == 0) {
 					//バレットの位置やテクスチャー座標を反映
-					float px = effectWk[i].pParticle[n].pos.x - bg->pos.x;	// エフェクトの表示位置X
-					float py = effectWk[i].pParticle[n].pos.y - bg->pos.y;	// エフェクトの表示位置Y
+					//float px = effectWk[i].pParticle[n].pos.x - bg->pos.x;	// エフェクトの表示位置X
+					//float py = effectWk[i].pParticle[n].pos.y - bg->pos.y;	// エフェクトの表示位置Y
 					float pw = EFFECT_TEXTURE_SIZE_X;			// エフェクトの表示幅
 					float ph = EFFECT_TEXTURE_SIZE_Y;			// エフェクトの表示高さ
 
-					px -= EFFECT_TEXTURE_SIZE_X / 4;
-					py -= EFFECT_TEXTURE_SIZE_Y / 4;
+					//px -= EFFECT_TEXTURE_SIZE_X / 4;
+					//py -= EFFECT_TEXTURE_SIZE_Y / 4;
 
 					float tw = 1.0f / EFFECT_TEXTURE_PATTERN_DIVIDE_X;	// テクスチャの幅
 					float th = 1.0f / EFFECT_TEXTURE_PATTERN_DIVIDE_Y;	// テクスチャの高さ
 					float tx = (float)(effectWk[i].pParticle[n].PatternAnim % EFFECT_TEXTURE_PATTERN_DIVIDE_X) * tw;	// テクスチャの左上X座標
 					float ty = (float)(effectWk[i].pParticle[n].PatternAnim / EFFECT_TEXTURE_PATTERN_DIVIDE_X) * th;	// テクスチャの左上Y座標
 
-					// １枚のポリゴンの頂点とテクスチャ座標を設定
-					SetSpriteColorRotation(g_VertexBuffer,
-						px, py, pw, ph,
-						tx, ty, tw, th,
-						XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-						0.0f);
+					//// １枚のポリゴンの頂点とテクスチャ座標を設定
+					//SetSpriteColorRotation(g_VertexBuffer,
+					//	px, py, pw, ph,
+					//	tx, ty, tw, th,
+					//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+					//	0.0f);
 
 					// ポリゴン描画
 					GetDeviceContext()->Draw(4, 0);

@@ -13,9 +13,8 @@
 #define TEXTURE_HEIGHT				(1080)			// (SCREEN_HEIGHT)	// 
 #define TEXTURE_MAX					(3)				// テクスチャの数
 
-#define TEXTURE_WIDTH_LOGO			(480)			// ロゴサイズ
-#define TEXTURE_HEIGHT_LOGO			(80)			// 
-
+		
+#define TILE_DRAW_SIZE		(10)
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
@@ -35,7 +34,7 @@ static char *g_TexturName[TEXTURE_MAX] = {
 
 
 static BOOL	g_Load = FALSE;		// 初期化を行ったかのフラグ
-static BG	g_BG;
+static BG	g_BG[TILE_SIZE][TILE_SIZE];
 
 
 
@@ -68,15 +67,12 @@ HRESULT InitBG(void)
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	GetDevice()->CreateBuffer(&bd, NULL, &g_VertexBuffer);
 
+	for (int y = 0; y < TILE_SIZE; y++) {
+		for (int x = 0; x < TILE_SIZE; x++) {
+			g_BG[y][x].spriteId = 0;
+		}
+	}
 
-	// 変数の初期化
-	g_BG.w     = TEXTURE_WIDTH;
-	g_BG.h     = TEXTURE_HEIGHT;
-	g_BG.pos   = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	g_BG.texNo = 0;
-
-	g_BG.scrl  = 0.0f;		// TEXスクロール
-	g_BG.scrl2 = 0.0f;		// TEXスクロール
 
 	g_Load = TRUE;
 	return S_OK;
@@ -112,7 +108,7 @@ void UninitBG(void)
 //=============================================================================
 void UpdateBG(void)
 {
-	g_BG.old_pos = g_BG.pos;	// １フレ前の情報を保存
+
 
 
 	//g_BG.scrl -= 0.0f;		// 0.005f;		// スクロール
@@ -147,58 +143,44 @@ void DrawBG(void)
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	SetMaterial(material);
 
-	// タイトルの背景を描画
-	{
-		// テクスチャ設定
-		GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_BG.texNo]);
+	for (int y = 0; y < TILE_SIZE; y++) {
+		for (int x = 0; x < TILE_SIZE; x++) {
+			
+			// テクスチャ設定
+			GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[g_BG[y][x].spriteId]);
 
-		// １枚のポリゴンの頂点とテクスチャ座標を設定
-		SetSpriteLTColor(g_VertexBuffer,
-			0 - g_BG.pos.x, 0 - g_BG.pos.y, g_BG.w, g_BG.h,
-			0.0f, 0.0f, 1.0f, 1.0f,
-			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+			// １枚のポリゴンの頂点とテクスチャ座標を設定
+			SetSpriteLTColor(g_VertexBuffer,
+				TILE_DRAW_SIZE * x*5, TILE_DRAW_SIZE * y*5, TILE_DRAW_SIZE*5, TILE_DRAW_SIZE*5,
+				0.0f, 0.0f, 1.0f, 1.0f,
+				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 
-		// ポリゴン描画
-		GetDeviceContext()->Draw(4, 0);
+			// ポリゴン描画
+			GetDeviceContext()->Draw(4, 0);
+			
+		}
 	}
-
 
 	// 空を描画
-	{
-		// テクスチャ設定
-		GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[1]);
+	//{
+	//	// テクスチャ設定
+	//	GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[1]);
 
-		// １枚のポリゴンの頂点とテクスチャ座標を設定
-		//float	tx = (g_BG.pos.x - g_BG.old_pos.x) * ((float)SCREEN_WIDTH / TEXTURE_WIDTH);
-		//g_BG.scrl += tx * 0.001f;
-		g_BG.scrl += 0.001f;
+	//	// １枚のポリゴンの頂点とテクスチャ座標を設定
+	//	//float	tx = (g_BG.pos.x - g_BG.old_pos.x) * ((float)SCREEN_WIDTH / TEXTURE_WIDTH);
+	//	//g_BG.scrl += tx * 0.001f;
+	//	g_BG.scrl += 0.001f;
 
-		SetSpriteLTColor(g_VertexBuffer,
-			0.0f, 0.0f, SCREEN_WIDTH, SKY_H,
-			g_BG.scrl, 0.0f, 1.0f, 1.0f,
-			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	//	SetSpriteLTColor(g_VertexBuffer,
+	//		0.0f, 0.0f, SCREEN_WIDTH, SKY_H,
+	//		g_BG.scrl, 0.0f, 1.0f, 1.0f,
+	//		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 
-		// ポリゴン描画
-		GetDeviceContext()->Draw(4, 0);
-	}
+	//	// ポリゴン描画
+	//	GetDeviceContext()->Draw(4, 0);
+	//}
 
-	{
-		// テクスチャ設定
-		GetDeviceContext()->PSSetShaderResources(0, 1, &g_Texture[2]);
 
-		// １枚のポリゴンの頂点とテクスチャ座標を設定
-		float	tx = (g_BG.pos.x - g_BG.old_pos.x) * ((float)SCREEN_WIDTH / TEXTURE_WIDTH);
-		g_BG.scrl2 += tx * 0.01f;
-		//g_BG.scrl2 += 0.003f;
-
-		SetSpriteLTColor(g_VertexBuffer,
-			0.0f, SKY_H/2, SCREEN_WIDTH, SKY_H,
-			g_BG.scrl2, 0.0f, 1.0f, 1.0f,
-			XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-
-		// ポリゴン描画
-		GetDeviceContext()->Draw(4, 0);
-	}
 
 
 }
@@ -207,9 +189,9 @@ void DrawBG(void)
 //=============================================================================
 // BG構造体の先頭アドレスを取得
 //=============================================================================
-BG* GetBG(void)
+BG* GetBG(int x, int y)
 {
-	return &g_BG;
+	return &g_BG[x][y];
 }
 
 
