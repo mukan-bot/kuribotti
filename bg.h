@@ -20,8 +20,8 @@ struct BG
 };
 
 #define TILE_SIZE			(60)	
-#define TILE_AMOUNT_H		(SCREEN_WIDTH /TILE_SIZE)
-#define TILE_AMOUNT_W		(SCREEN_HEIGHT /TILE_SIZE)
+#define TILE_AMOUNT_W		(SCREEN_WIDTH /TILE_SIZE)
+#define TILE_AMOUNT_H		(SCREEN_HEIGHT /TILE_SIZE)
 #define	SKY_H	(150.0f)	// ãÛÇÃÉ|ÉäÉSÉìÇÃçÇÇ≥
 
 

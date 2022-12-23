@@ -35,8 +35,8 @@ static ID3D11Buffer				*g_VertexBuffer = NULL;				// 頂点情報
 static ID3D11ShaderResourceView	*g_Texture[TEXTURE_MAX] = { NULL };	// テクスチャ情報
 
 static char *g_TexturName[TEXTURE_MAX] = {
-	"data/TEXTURE/enemy00.png",
-	"data/TEXTURE/bar_white.png",
+	"data/TEXTURE/kumagoki.png",
+	"data/TEXTURE/otukagoki.png",
 };
 
 
@@ -94,6 +94,10 @@ HRESULT InitEnemy(void)
 		g_EnemyCnt++;
 	}
 
+	g_Enemy[1].enemyType = 1;
+	g_Enemy[1].x = 15;
+	g_Enemy[1].y = 8;
+
 	g_Load = TRUE;
 	return S_OK;
 }
@@ -135,9 +139,11 @@ void UpdateEnemy(void)
 	BG* bg = GetBG();
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
+		g_Enemy[i].wait++;
 		// 生きてるエネミーだけ処理をする
 		if (g_Enemy[i].use == TRUE && !g_Enemy[i].isTrapped && g_Enemy[i].wait > WAIT)
 		{
+			g_Enemy[i].wait = 0;
 			g_EnemyCnt++;
 			// アニメーション  
 			g_Enemy[i].countAnim += 1.0f;
@@ -192,7 +198,7 @@ void UpdateEnemy(void)
 					}
 				}
 				if (abs(g_Enemy[i].x - g_Enemy[g_Enemy[i].targetID].x) < abs(g_Enemy[i].y - g_Enemy[g_Enemy[i].targetID].y)) {
-					if (g_Enemy[i].Dir != DOWN && g_Enemy[i].y - g_Enemy[g_Enemy[i].targetID].y < 0) {
+					if (g_Enemy[i].Dir != DOWN && g_Enemy[i].y - g_Enemy[g_Enemy[i].targetID].y > 0) {
 						g_Enemy[i].y--;
 						g_Enemy[i].Dir = UP;
 						break;
@@ -236,10 +242,10 @@ void UpdateEnemy(void)
 
 	}
 	// エネミー全滅チェック
-	if (g_EnemyCnt <= 0)
-	{
-		SetFade(FADE_OUT, MODE_RESULT);
-	}
+	//if (g_EnemyCnt <= 0)
+	//{
+	//	SetFade(FADE_OUT, MODE_RESULT);
+	//}
 
 #ifdef _DEBUG	// デバッグ情報を表示する
 
